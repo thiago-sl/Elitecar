@@ -9,11 +9,12 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
     .container {
       max-width: 950px;
-      margin: auto;
+      margin: 20px auto;
       background: #fff;
       padding: 30px;
       border-radius: 10px;
@@ -33,6 +34,7 @@
       margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 6px;
+      box-sizing: border-box;
     }
     table {
       width: 100%;
@@ -69,9 +71,10 @@
       display: flex;
       justify-content: space-between;
       margin-top: 40px;
+      gap: 10px;
     }
     .assinaturas div {
-      width: 45%;
+      flex: 1;
       text-align: center;
       border-top: 1px solid #000;
       padding-top: 10px;
@@ -100,18 +103,37 @@
     }
     .form-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 20px;
     }
     .form-group {
       flex: 1;
+      min-width: 200px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .form-row {
+        flex-direction: column;
+      }
+      .assinaturas {
+        flex-direction: column;
+        align-items: center;
+      }
+      .assinaturas div {
+        width: 100%;
+        margin-top: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <main class="container">
     <div class="logo">
-        <img src="./img/imgg.avif" width="200px"  alt="Logo Elite Car" />
-      </div>
+      <img src="./img/imgg.avif" width="200px" alt="Logo Elite Car" />
+    </div>
     <h1>Elite Car - Lanternagem e Pintura</h1>
 
     <form id="form-orcamento">
@@ -153,7 +175,7 @@
       <button type="submit">Gerar Orçamento</button>
     </form>
 
-    <div id="orcamento-final">
+    <section id="orcamento-final">
       <div id="pdf-content">
         <div class="logo">
           <img src="./img/imgg.avif" alt="Logo Elite Car" />
@@ -198,10 +220,10 @@
       </div>
 
       <div style="text-align:center;">
-        <button onclick="baixarPDF()">Baixar PDF</button>
+        <button onclick="baixarPDF()">📥 Baixar PDF</button>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
     const pecas = [
@@ -310,12 +332,13 @@
     });
 
     function baixarPDF() {
+      window.scrollTo(0, 0); // Corrige PDF em branco
       const elemento = document.getElementById("pdf-content");
       const opt = {
         margin: 10,
         filename: `orcamento-elitecar-${new Date().toISOString().slice(0,10)}.pdf`,
         image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
       html2pdf().set(opt).from(elemento).save();
