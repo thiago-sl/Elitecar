@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orçamento - Elite Car</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 950px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #000;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #orcamento-final {
+      display: none;
+      margin-top: 40px;
+    }
+    .assinaturas {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+    .assinaturas div {
+      width: 45%;
+      text-align: center;
+      border-top: 1px solid #000;
+      padding-top: 10px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      max-height: 80px;
+    }
+    .info-empresa {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .alerta {
+      margin-top: 10px;
+      color: #a00;
+      font-size: 13px;
+    }
+    .total-area {
+      text-align: right;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+    .form-group {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+        <img src="./img/imgg.avif" width="200px"  alt="Logo Elite Car" />
+      </div>
+    <h1>Elite Car - Lanternagem e Pintura</h1>
+
+    <form id="form-orcamento">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Cliente:</label>
+          <input type="text" id="cliente" required />
+        </div>
+        <div class="form-group">
+          <label>Veículo / Modelo:</label>
+          <input type="text" id="veiculo" required />
+        </div>
+      </div>
+
+      <h2>Itens de Lataria</h2>
+      <table id="tabela-itens">
+        <thead>
+          <tr>
+            <th>✓</th>
+            <th>Peça</th>
+            <th>UND</th>
+            <th>Valor Unitário (R$)</th>
+            <th>Total (R$)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <label>
+        <input type="checkbox" id="pintura-completa" />
+        Incluir Pintura Completa
+      </label>
+      <input type="number" id="valor-pintura" placeholder="Valor Pintura Completa (R$)" disabled />
+
+      <div class="total-area">
+        Valor Total: R$ <span id="valor-total">0.00</span>
+      </div>
+
+      <button type="submit">Gerar Orçamento</button>
+    </form>
+
+    <div id="orcamento-final">
+      <div id="pdf-content">
+        <div class="logo">
+          <img src="./img/imgg.avif" alt="Logo Elite Car" />
+        </div>
+        <div class="info-empresa">
+          <strong>Elite Car - Lanternagem e Pintura Automotiva</strong><br/>
+          CNPJ: 00.000.000/0001-00 | Rua das Oficinas, 123, São Paulo - SP<br/>
+          Tel: (11) 99999-9999 | WhatsApp: (11) 98888-8888
+        </div>
+
+        <h2>Orçamento de Serviços</h2>
+        <p><strong>Data:</strong> <span id="out-data"></span></p>
+        <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
+        <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
+
+        <h3>Peças a serem pintadas/reparadas:</h3>
+        <table id="tabela-resumo">
+          <thead>
+            <tr>
+              <th>Peça</th>
+              <th>UND</th>
+              <th>Valor Unitário</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="total-area">
+          Valor Total do Orçamento: R$ <span id="out-total"></span>
+        </div>
+
+        <div class="alerta">
+          * Este orçamento é válido por 15 dias.<br/>
+          * Sujeito a alterações caso sejam identificadas novas necessidades.
+        </div>
+
+        <div class="assinaturas">
+          <div>Assinatura do Prestador</div>
+          <div>Assinatura do Cliente</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <button onclick="baixarPDF()">Baixar PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pecas = [
+      "Porta Dianteira Direita", "Porta Dianteira Esquerda", "Porta Traseira Direita", "Porta Traseira Esquerda",
+      "Paralama Dianteiro Direito", "Paralama Dianteiro Esquerdo", "Para-choque Dianteiro", "Para-choque Traseiro",
+      "Capô", "Teto", "Porta-Malas", "Saia Lateral Direita", "Saia Lateral Esquerda"
+    ];
+
+    const tabelaBody = document.querySelector("#tabela-itens tbody");
+
+    pecas.forEach((peca, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="checkbox" class="chk" data-index="${index}"></td>
+        <td>${peca}</td>
+        <td><input type="number" min="1" value="1" class="und" data-index="${index}"></td>
+        <td><input type="number" min="0" value="0" class="valor" data-index="${index}"></td>
+        <td><span class="total" data-index="${index}">0.00</span></td>
+      `;
+      tabelaBody.appendChild(row);
+    });
+
+    const pinturaCheckbox = document.getElementById("pintura-completa");
+    const pinturaValor = document.getElementById("valor-pintura");
+
+    pinturaCheckbox.addEventListener("change", () => {
+      pinturaValor.disabled = !pinturaCheckbox.checked;
+      atualizarTotais();
+    });
+
+    pinturaValor.addEventListener("input", atualizarTotais);
+
+    function atualizarTotais() {
+      let totalGeral = 0;
+      pecas.forEach((_, i) => {
+        const chk = document.querySelector(`.chk[data-index="${i}"]`);
+        const und = document.querySelector(`.und[data-index="${i}"]`).value;
+        const val = document.querySelector(`.valor[data-index="${i}"]`).value;
+        const total = chk.checked ? (und * val) : 0;
+        document.querySelector(`.total[data-index="${i}"]`).textContent = total.toFixed(2);
+        totalGeral += total;
+      });
+
+      if (pinturaCheckbox.checked && pinturaValor.value) {
+        totalGeral += parseFloat(pinturaValor.value);
+      }
+
+      document.getElementById("valor-total").textContent = totalGeral.toFixed(2);
+    }
+
+    document.querySelectorAll(".chk, .und, .valor").forEach(el => {
+      el.addEventListener("input", atualizarTotais);
+      el.addEventListener("change", atualizarTotais);
+    });
+
+    document.getElementById("form-orcamento").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const cliente = document.getElementById("cliente").value;
+      const veiculo = document.getElementById("veiculo").value;
+      const data = new Date().toLocaleDateString("pt-BR");
+
+      document.getElementById("out-data").textContent = data;
+      document.getElementById("out-cliente").textContent = cliente;
+      document.getElementById("out-veiculo").textContent = veiculo;
+
+      const resumoBody = document.querySelector("#tabela-resumo tbody");
+      resumoBody.innerHTML = "";
+
+      let totalFinal = 0;
+
+      pecas.forEach((peca, i) => {
+        const chk = document.querySelector(`.chk[data-index="${i}"]`);
+        if (chk.checked) {
+          const und = parseInt(document.querySelector(`.und[data-index="${i}"]`).value);
+          const val = parseFloat(document.querySelector(`.valor[data-index="${i}"]`).value);
+          const total = und * val;
+          totalFinal += total;
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${peca}</td>
+            <td>${und}</td>
+            <td>R$ ${val.toFixed(2)}</td>
+            <td>R$ ${total.toFixed(2)}</td>
+          `;
+          resumoBody.appendChild(row);
+        }
+      });
+
+      if (pinturaCheckbox.checked && pinturaValor.value) {
+        const valor = parseFloat(pinturaValor.value);
+        totalFinal += valor;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td colspan="2">Pintura Completa</td>
+          <td>R$ ${valor.toFixed(2)}</td>
+          <td>R$ ${valor.toFixed(2)}</td>
+        `;
+        resumoBody.appendChild(row);
+      }
+
+      document.getElementById("out-total").textContent = totalFinal.toFixed(2);
+      document.getElementById("orcamento-final").style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    function baixarPDF() {
+      const elemento = document.getElementById("pdf-content");
+      const opt = {
+        margin: 10,
+        filename: `orcamento-elitecar-${new Date().toISOString().slice(0,10)}.pdf`,
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(elemento).save();
+    }
+  </script>
+</body>
+</html>
