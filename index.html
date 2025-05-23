@@ -162,11 +162,15 @@
         <tbody></tbody>
       </table>
 
-      <label>
-        <input type="checkbox" id="pintura-completa" />
-        Incluir Pintura Completa
-      </label>
-      <input type="number" id="valor-pintura" placeholder="Valor Pintura Completa (R$)" disabled />
+      <label><strong>Opções de Pintura:</strong></label>
+      <div style="margin-bottom: 10px;">
+        <label><input type="checkbox" id="pintura-fora" /> Pintura Externa</label>
+        <input type="number" id="valor-pintura-fora" placeholder="Valor Pintura Externa (R$)" disabled />
+      </div>
+      <div>
+        <label><input type="checkbox" id="pintura-dentro-fora" /> Pintura Interna e Externa</label>
+        <input type="number" id="valor-pintura-dentro-fora" placeholder="Valor Pintura Interna e Externa (R$)" disabled />
+      </div>
 
       <div class="total-area">
         Valor Total: R$ <span id="valor-total">0.00</span>
@@ -246,15 +250,23 @@
       tabelaBody.appendChild(row);
     });
 
-    const pinturaCheckbox = document.getElementById("pintura-completa");
-    const pinturaValor = document.getElementById("valor-pintura");
+    const pinturaForaCheckbox = document.getElementById("pintura-fora");
+    const pinturaForaValor = document.getElementById("valor-pintura-fora");
 
-    pinturaCheckbox.addEventListener("change", () => {
-      pinturaValor.disabled = !pinturaCheckbox.checked;
+    const pinturaDentroForaCheckbox = document.getElementById("pintura-dentro-fora");
+    const pinturaDentroForaValor = document.getElementById("valor-pintura-dentro-fora");
+
+    pinturaForaCheckbox.addEventListener("change", () => {
+      pinturaForaValor.disabled = !pinturaForaCheckbox.checked;
       atualizarTotais();
     });
+    pinturaForaValor.addEventListener("input", atualizarTotais);
 
-    pinturaValor.addEventListener("input", atualizarTotais);
+    pinturaDentroForaCheckbox.addEventListener("change", () => {
+      pinturaDentroForaValor.disabled = !pinturaDentroForaCheckbox.checked;
+      atualizarTotais();
+    });
+    pinturaDentroForaValor.addEventListener("input", atualizarTotais);
 
     function atualizarTotais() {
       let totalGeral = 0;
@@ -267,8 +279,11 @@
         totalGeral += total;
       });
 
-      if (pinturaCheckbox.checked && pinturaValor.value) {
-        totalGeral += parseFloat(pinturaValor.value);
+      if (pinturaForaCheckbox.checked && pinturaForaValor.value) {
+        totalGeral += parseFloat(pinturaForaValor.value);
+      }
+      if (pinturaDentroForaCheckbox.checked && pinturaDentroForaValor.value) {
+        totalGeral += parseFloat(pinturaDentroForaValor.value);
       }
 
       document.getElementById("valor-total").textContent = totalGeral.toFixed(2);
@@ -314,12 +329,24 @@
         }
       });
 
-      if (pinturaCheckbox.checked && pinturaValor.value) {
-        const valor = parseFloat(pinturaValor.value);
+      if (pinturaForaCheckbox.checked && pinturaForaValor.value) {
+        const valor = parseFloat(pinturaForaValor.value);
         totalFinal += valor;
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td colspan="2">Pintura Completa</td>
+          <td colspan="2">Pintura Externa</td>
+          <td>R$ ${valor.toFixed(2)}</td>
+          <td>R$ ${valor.toFixed(2)}</td>
+        `;
+        resumoBody.appendChild(row);
+      }
+
+      if (pinturaDentroForaCheckbox.checked && pinturaDentroForaValor.value) {
+        const valor = parseFloat(pinturaDentroForaValor.value);
+        totalFinal += valor;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td colspan="2">Pintura Interna e Externa</td>
           <td>R$ ${valor.toFixed(2)}</td>
           <td>R$ ${valor.toFixed(2)}</td>
         `;
