@@ -53,26 +53,7 @@
     padding: 6px;
     box-sizing: border-box;
   }
-  /* Exemplo: quando a tela tiver até 600px de largura (mobile) */
-@media only screen and (max-width: 600px) {
-  /* Exemplo de ajustes: */
-  body {
-    font-size: 14px; /* texto menor */
-  }
-  .container {
-    padding: 10px;
-    width: 100%;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-  nav, header, footer {
-    /* exemplo: tornar menus mais simples */
-    flex-direction: column;
-  }
-}
-
+  
 </style>
 </head>
 <body>
@@ -252,10 +233,10 @@
 
   // Função para criar as linhas da tabela de peças (exemplo)
   const pecasExemplo = [
-    { nome: "Parafuso", unidade: "un", valor: 0.50 },
-    { nome: "Óleo", unidade: "litro", valor: 25.00 },
-    { nome: "Filtro de óleo", unidade: "un", valor: 45.00 },
-    { nome: "Pneu", unidade: "un", valor: 350.00 },
+    { nome: "", unidade: "un", valor: 0.00 },
+    { nome: "", unidade: "un", valor: 0.00},
+    { nome: "", unidade: "un", valor: 0.00 },
+    { nome: "", unidade: "un", valor: 0.00 },
   ];
 
   function criarLinhasTabela() {
@@ -278,8 +259,8 @@
       const tdQuantidade = document.createElement("td");
       const inputQtd = document.createElement("input");
       inputQtd.type = "number";
-      inputQtd.min = "0";
-      inputQtd.value = "0";
+      inputQtd.min = "1";
+      inputQtd.value = "1";
       inputQtd.classList.add("quantidade");
       inputQtd.dataset.index = i;
       tdQuantidade.appendChild(inputQtd);
