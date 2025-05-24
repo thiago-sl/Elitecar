@@ -1,477 +1,489 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Orçamento - Elite Car</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 950px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #000;
-    }
-    th, td {
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #eee;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    #orcamento-final, #recibo-final {
-      display: none;
-      margin-top: 40px;
-    }
-    .assinaturas {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 40px;
-      gap: 10px;
-    }
-    .assinaturas div {
-      flex: 1;
-      text-align: center;
-      border-top: 1px solid #000;
-      padding-top: 10px;
-    }
-    .logo {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .logo img {
-      max-height: 80px;
-    }
-    .info-empresa {
-      text-align: center;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .alerta {
-      margin-top: 10px;
-      color: #a00;
-      font-size: 13px;
-    }
-    .total-area {
-      text-align: right;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .form-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-      .form-row {
-        flex-direction: column;
-      }
-      .assinaturas {
-        flex-direction: column;
-        align-items: center;
-      }
-      .assinaturas div {
-        width: 100%;
-        margin-top: 20px;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Orçamento e Recibo Elite Car</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
+  h1, h2 { text-align: center; }
+  form { max-width: 700px; margin: 0 auto 30px; background: white; padding: 20px; border-radius: 6px; box-shadow: 0 0 10px #ccc; }
+  label { display: block; margin: 10px 0 5px; }
+  input[type=text], input[type=number], select { width: 100%; padding: 8px; box-sizing: border-box; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+  th { background-color: #4CAF50; color: white; }
+  #orcamento-final, #recibo-final { max-width: 700px; margin: 20px auto; background: white; padding: 20px; border-radius: 6px; box-shadow: 0 0 10px #ccc; display: none; }
+  button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; margin-top: 15px; }
+  button:disabled { background-color: #888; cursor: not-allowed; }
+  .assinaturas { display: flex; justify-content: space-between; margin-top: 50px; }
+  .assinatura-box {
+    border-top: 1px solid #000;
+    width: 40%;
+    text-align: center;
+    padding-top: 5px;
+    font-weight: bold;
+  }
+  input.valor-unitario {
+    width: 80px;
+    text-align: right;
+  }
+  .btn-group {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  /* Para esconder os botões ao capturar a imagem */
+  .no-print {
+    display: block;
+  }
+  .hide-buttons {
+    display: none !important;
+  }
+  /* Estilo dos campos extras no recibo */
+  #recibo-final label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+  }
+  #recibo-final input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+</style>
 </head>
 <body>
-  <main class="container">
-    <div class="logo">
-      <img src="./img/imgg.avif" width="200px" alt="Logo Elite Car" />
-    </div>
-    <h1>Elite Car - Lanternagem e Pintura</h1>
 
-    <form id="form-orcamento">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nome do Cliente:</label>
-          <input type="text" id="cliente" required />
-        </div>
-        <div class="form-group">
-          <label>Veículo / Modelo:</label>
-          <input type="text" id="veiculo" required />
-        </div>
-      </div>
+<h1>Elite Car - Orçamento e Recibo</h1>
 
-      <h2>Itens de Lataria</h2>
-      <table id="tabela-itens">
-        <thead>
-          <tr>
-            <th>✓</th>
-            <th>Peça</th>
-            <th>UND</th>
-            <th>Valor Unitário (R$)</th>
-            <th>Total (R$)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+<form id="form-orcamento">
+  <h2>Orçamento</h2>
+  <label for="cliente">Nome do Cliente:</label>
+  <input type="text" id="cliente" required />
 
-      <h2>Pinturas Completas</h2>
-      <label>
-        <input type="checkbox" id="pintura-fora" />
-        Pintura Fora
-      </label>
-      <input type="number" id="valor-pintura-fora" placeholder="Valor Pintura Fora (R$)" disabled style="margin-bottom: 10px; width: 200px;" />
+  <label for="veiculo">Veículo:</label>
+  <input type="text" id="veiculo" required />
 
-      <label>
-        <input type="checkbox" id="pintura-fora-e-dentro" />
-        Pintura Fora e Dentro
-      </label>
-      <input type="number" id="valor-pintura-fora-e-dentro" placeholder="Valor Pintura Fora e Dentro (R$)" disabled style="margin-bottom: 10px; width: 200px;" />
+  <table id="tabela-itens">
+    <thead>
+      <tr>
+        <th>Selecionar</th>
+        <th>Peça</th>
+        <th>Unidade</th>
+        <th>Valor Unitário (R$)</th>
+        <th>Total (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Linhas criadas via JS -->
+    </tbody>
+  </table>
 
-      <div class="total-area">
-        Valor Total: R$ <span id="valor-total">0.00</span>
-      </div>
+  <label><input type="checkbox" id="pintura-fora" /> Pintura Fora</label>
+  <input type="number" id="valor-pintura-fora" disabled placeholder="Valor Pintura Fora (R$)" min="0" step="0.01" />
 
-      <button type="submit">Gerar Orçamento</button>
-    </form>
+  <label><input type="checkbox" id="pintura-fora-e-dentro" /> Pintura Fora e Dentro</label>
+  <input type="number" id="valor-pintura-fora-e-dentro" disabled placeholder="Valor Pintura Fora e Dentro (R$)" min="0" step="0.01" />
 
-    <section id="orcamento-final">
-      <div id="pdf-content">
-        <div class="logo">
-          <img src="./img/imgg.avif" alt="Logo Elite Car" />
-        </div>
-        <div class="info-empresa">
-          <strong>Elite Car - Lanternagem e Pintura Automotiva</strong><br/>
-          CNPJ: 00.000.000/0001-00 | Rua das Oficinas, 123, São Paulo - SP<br/>
-          Tel: (11) 99999-9999 | WhatsApp: (11) 98888-8888
-        </div>
+  <p><strong>Valor Total: R$ <span id="valor-total">0.00</span></strong></p>
 
-        <h2>Orçamento de Serviços</h2>
-        <p><strong>Data:</strong> <span id="out-data"></span></p>
-        <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
-        <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
+  <button type="submit">Gerar Orçamento</button>
+</form>
 
-        <h3>Peças a serem pintadas/reparadas:</h3>
-        <table id="tabela-resumo">
-          <thead>
-            <tr>
-              <th>Peça</th>
-              <th>UND</th>
-              <th>Valor Unitário</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+<section id="orcamento-final">
+  <h2>Resumo do Orçamento</h2>
 
-        <div class="total-area">
-          Valor Total do Orçamento: R$ <span id="out-total"></span>
-        </div>
+  <!-- Dados fixos da empresa -->
+  <p><strong>Elite Car Serviços Automotivos</strong></p>
+  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
+  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+  <hr />
 
-        <div class="alerta">
-          * Este orçamento é válido por 15 dias.<br/>
-          * Sujeito a alterações caso sejam identificadas novas necessidades.
-        </div>
+  <p><strong>Data:</strong> <span id="out-data"></span> <strong>Hora:</strong> <span id="out-hora"></span></p>
+  <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
+  <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
 
-        <div class="assinaturas">
-          <div>Assinatura do Prestador</div>
-          <div>Assinatura do Cliente</div>
-        </div>
-      </div>
+  <table id="tabela-resumo">
+    <thead>
+      <tr>
+        <th>Peça</th>
+        <th>Unidade</th>
+        <th>Valor Unitário (R$)</th>
+        <th>Total (R$)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-      <div style="text-align:center;">
-        <button onclick="baixarPDF()">📥 Baixar PDF</button>
-      </div>
-    </section>
+  <p><strong>Valor Total: R$ <span id="out-valor-total"></span></strong></p>
 
-    <hr style="margin-top: 40px; margin-bottom: 40px;">
-    <h2>Gerar Recibo de Pagamento</h2>
-    <form id="form-recibo">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nome do Cliente:</label>
-          <input type="text" id="recibo-cliente" required />
-        </div>
-        <div class="form-group">
-          <label>Valor Pago (R$):</label>
-          <input type="number" id="recibo-valor" min="0" step="0.01" required />
-        </div>
-      </div>
-      <div class="form-group" style="margin-top:10px;">
-        <label>Forma de Pagamento:</label>
-        <select id="recibo-pagamento" required>
-          <option value="">Selecione</option>
-          <option value="Débito">Débito</option>
-          <option value="Crédito">Crédito</option>
-          <option value="Pix">Pix</option>
-          <option value="Dinheiro">Dinheiro</option>
-        </select>
-      </div>
-      <button type="submit">Gerar Recibo</button>
-    </form>
+  <div class="assinaturas">
+    <div class="assinatura-box">Assinatura do Cliente</div>
+    <div class="assinatura-box">Assinatura do Prestador</div>
+  </div>
 
-    <section id="recibo-final">
-      <div id="pdf-recibo-content">
-        <div class="logo">
-          <img src="./img/imgg.avif" alt="Logo Elite Car" />
-        </div>
-        <div class="info-empresa">
-          <strong>Elite Car - Lanternagem e Pintura Automotiva</strong><br/>
-          CNPJ: 00.000.000/0001-00 | Rua das Oficinas, 123, São Paulo - SP<br/>
-          Tel: (11) 99999-9999 | WhatsApp: (11) 98888-8888
-        </div>
+  <div class="btn-group no-print">
+    <button id="btn-baixar-orcamento" disabled>Baixar Orçamento</button>
+    <button id="btn-compartilhar-orcamento" disabled>Compartilhar Orçamento</button>
+  </div>
+</section>
 
-        <h2>Recibo de Pagamento</h2>
-        <p><strong>Data:</strong> <span id="recibo-data"></span></p>
-        <p><strong>Cliente:</strong> <span id="recibo-out-cliente"></span></p>
-        <p><strong>Valor Pago:</strong> R$ <span id="recibo-out-valor"></span></p>
-        <p><strong>Forma de Pagamento:</strong> <span id="recibo-out-pagamento"></span></p>
+<form id="form-recibo" style="max-width:700px; margin: 40px auto 0; background:#fff; padding:20px; border-radius:6px; box-shadow: 0 0 10px #ccc;">
+  <h2>Recibo</h2>
 
-        <p style="margin-top: 30px;">Agradecemos a preferência!</p>
+  <!-- Dados fixos da empresa -->
+  <p><strong>Elite Car Serviços Automotivos</strong></p>
+  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
+  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+  <hr />
 
-        <div class="assinaturas" style="margin-top: 60px;">
-          <div>Assinatura do Prestador</div>
-          <div>Assinatura do Cliente</div>
-        </div>
-      </div>
-      <div style="text-align:center; margin-top: 20px;">
-        <button onclick="baixarPDFRecibo()">📥 Baixar Recibo em PDF</button>
-      </div>
-    </section>
-  </main>
+  <label for="recibo-cliente">Nome do Cliente:</label>
+  <input type="text" id="recibo-cliente" required />
 
-  <script>
-    const pecas = [
-      "Paralama Dianteiro", "Paralama Traseiro",
-      "Porta Dianteira", "Porta Traseira",
-      "Capo", "Teto",
-      "Parachoque Dianteiro", "Parachoque Traseiro",
-      "Tampa Traseira"
-    ];
+  <label for="recibo-valor-total">Valor Total do Orçamento (R$):</label>
+  <input type="number" id="recibo-valor-total" min="0" step="0.01" required />
 
-    const tabelaBody = document.querySelector("#tabela-itens tbody");
-    const pinturaForaCheckbox = document.getElementById("pintura-fora");
-    const pinturaForaInput = document.getElementById("valor-pintura-fora");
-    const pinturaForaDentroCheckbox = document.getElementById("pintura-fora-e-dentro");
-    const pinturaForaDentroInput = document.getElementById("valor-pintura-fora-e-dentro");
+  <label for="recibo-valor-pago">Valor Pago pelo Cliente (R$):</label>
+  <input type="number" id="recibo-valor-pago" min="0" step="0.01" required />
 
-    // Criar linhas da tabela de peças com checkbox, quantidade e valor unitário
-    pecas.forEach((peca, i) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input type="checkbox" class="chk" data-index="${i}" /></td>
-        <td>${peca}</td>
-        <td><input type="number" min="0" value="0" class="und" data-index="${i}" /></td>
-        <td><input type="number" min="0" value="0" step="0.01" class="valor" data-index="${i}" /></td>
-        <td><span class="total" data-index="${i}">0.00</span></td>
-      `;
-      tabelaBody.appendChild(tr);
+  <label for="recibo-valor-falta">Valor que Falta Pagar (R$):</label>
+  <input type="number" id="recibo-valor-falta" readonly style="background:#eee;" />
+
+  <label for="recibo-pagamento">Forma de Pagamento:</label>
+  <select id="recibo-pagamento" required>
+    <option value="">Selecione</option>
+    <option value="Dinheiro">Dinheiro</option>
+    <option value="Pix">Pix</option>
+    <option value="Cartão">Cartão</option>
+    <option value="Outro">Outro</option>
+  </select>
+
+  <button type="submit">Gerar Recibo</button>
+</form>
+
+<section id="recibo-final" style="max-width:700px; margin: 20px auto; background:#fff; padding:20px; border-radius:6px; box-shadow: 0 0 10px #ccc; display:none;">
+  <h2>Recibo de Pagamento - Elite Car</h2>
+
+  <!-- Dados fixos da empresa -->
+  <p><strong>Elite Car Serviços Automotivos</strong></p>
+  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
+  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+  <hr />
+
+  <p>Recebemos de: <span id="out-recibo-cliente"></span></p>
+  <p>Valor Total do Orçamento: R$ <span id="out-recibo-valor-total"></span></p>
+  <p>Valor Pago: R$ <span id="out-recibo-valor-pago"></span></p>
+  <p>Valor que Falta: R$ <span id="out-recibo-valor-falta"></span></p>
+  <p>Forma de pagamento: <span id="out-recibo-pagamento"></span></p>
+  <p>Data: <span id="out-recibo-data"></span></p>
+
+  <div class="assinaturas">
+    <div class="assinatura-box">Assinatura do Cliente</div>
+    <div class="assinatura-box">Assinatura do Prestador</div>
+  </div>
+
+  <div class="btn-group no-print">
+    <button id="btn-baixar-recibo" disabled>Baixar Recibo</button>
+    <button id="btn-compartilhar-recibo" disabled>Compartilhar Recibo</button>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  // Dados das peças para popular tabela
+  const pecas = [
+    { nome: "Motor", unidade: "unidade", valor: 1500.00 },
+    { nome: "Filtro de Ar", unidade: "unidade", valor: 100.00 },
+    { nome: "Óleo", unidade: "litro", valor: 30.00 },
+    { nome: "Pneu", unidade: "unidade", valor: 400.00 },
+    { nome: "Pastilha de Freio", unidade: "par", valor: 120.00 },
+  ];
+
+  const tabelaBody = document.querySelector("#tabela-itens tbody");
+
+  // Preencher tabela orçamento
+  pecas.forEach((peca, i) => {
+    const tr = document.createElement("tr");
+
+    const tdSelecionar = document.createElement("td");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "item-checkbox";
+    checkbox.dataset.index = i;
+    tdSelecionar.appendChild(checkbox);
+
+    const tdNome = document.createElement("td");
+    tdNome.textContent = peca.nome;
+
+    const tdUnidade = document.createElement("td");
+    tdUnidade.textContent = peca.unidade;
+
+    const tdValorUnitario = document.createElement("td");
+    const inputValor = document.createElement("input");
+    inputValor.type = "number";
+    inputValor.min = "0";
+    inputValor.step = "0.01";
+    inputValor.className = "valor-unitario";
+    inputValor.value = peca.valor.toFixed(2);
+    inputValor.dataset.index = i;
+    inputValor.disabled = true; // só habilita se selecionado
+    tdValorUnitario.appendChild(inputValor);
+
+    const tdTotal = document.createElement("td");
+    tdTotal.textContent = "0.00";
+
+    tr.appendChild(tdSelecionar);
+    tr.appendChild(tdNome);
+    tr.appendChild(tdUnidade);
+    tr.appendChild(tdValorUnitario);
+    tr.appendChild(tdTotal);
+
+    tabelaBody.appendChild(tr);
+  });
+
+  // Controlar habilitação dos inputs de valor unitário ao selecionar peça
+  tabelaBody.addEventListener("change", (e) => {
+    if(e.target.classList.contains("item-checkbox")) {
+      const idx = e.target.dataset.index;
+      const inputValor = document.querySelector(`input.valor-unitario[data-index="${idx}"]`);
+      inputValor.disabled = !e.target.checked;
+      if(!e.target.checked) {
+        // Reset total e valor unitário para padrão
+        inputValor.value = pecas[idx].valor.toFixed(2);
+        e.target.closest("tr").querySelector("td:last-child").textContent = "0.00";
+      }
+      atualizarValorTotal();
+    }
+  });
+
+  // Atualizar total da linha ao mudar valor unitário
+  tabelaBody.addEventListener("input", (e) => {
+    if(e.target.classList.contains("valor-unitario")) {
+      const valor = parseFloat(e.target.value) || 0;
+      const linha = e.target.closest("tr");
+      const checkbox = linha.querySelector(".item-checkbox");
+      if(checkbox.checked) {
+        linha.querySelector("td:last-child").textContent = valor.toFixed(2);
+      } else {
+        linha.querySelector("td:last-child").textContent = "0.00";
+      }
+      atualizarValorTotal();
+    }
+  });
+
+  // Pintura fora e pintura fora e dentro
+  const pinturaFora = document.getElementById("pintura-fora");
+  const valorPinturaFora = document.getElementById("valor-pintura-fora");
+  const pinturaForaEDentro = document.getElementById("pintura-fora-e-dentro");
+  const valorPinturaForaEDentro = document.getElementById("valor-pintura-fora-e-dentro");
+
+  pinturaFora.addEventListener("change", () => {
+    valorPinturaFora.disabled = !pinturaFora.checked;
+    if(!pinturaFora.checked) {
+      valorPinturaFora.value = "";
+    }
+    atualizarValorTotal();
+  });
+  valorPinturaFora.addEventListener("input", atualizarValorTotal);
+
+  pinturaForaEDentro.addEventListener("change", () => {
+    valorPinturaForaEDentro.disabled = !pinturaForaEDentro.checked;
+    if(!pinturaForaEDentro.checked) {
+      valorPinturaForaEDentro.value = "";
+    }
+    atualizarValorTotal();
+  });
+  valorPinturaForaEDentro.addEventListener("input", atualizarValorTotal);
+
+  function atualizarValorTotal() {
+    let total = 0;
+    tabelaBody.querySelectorAll("tr").forEach(tr => {
+      const checkbox = tr.querySelector(".item-checkbox");
+      const valorUnitario = parseFloat(tr.querySelector("input.valor-unitario").value) || 0;
+      if(checkbox.checked) {
+        total += valorUnitario;
+      }
+    });
+    if(pinturaFora.checked) {
+      total += parseFloat(valorPinturaFora.value) || 0;
+    }
+    if(pinturaForaEDentro.checked) {
+      total += parseFloat(valorPinturaForaEDentro.value) || 0;
+    }
+    document.getElementById("valor-total").textContent = total.toFixed(2);
+  }
+
+  // Gerar orçamento
+  document.getElementById("form-orcamento").addEventListener("submit", e => {
+    e.preventDefault();
+    const cliente = document.getElementById("cliente").value;
+    const veiculo = document.getElementById("veiculo").value;
+    const data = new Date();
+    document.getElementById("out-data").textContent = data.toLocaleDateString();
+    document.getElementById("out-hora").textContent = data.toLocaleTimeString();
+    document.getElementById("out-cliente").textContent = cliente;
+    document.getElementById("out-veiculo").textContent = veiculo;
+
+    const tbodyResumo = document.querySelector("#tabela-resumo tbody");
+    tbodyResumo.innerHTML = "";
+
+    // Peças selecionadas
+    tabelaBody.querySelectorAll("tr").forEach(tr => {
+      const checkbox = tr.querySelector(".item-checkbox");
+      if(checkbox.checked) {
+        const nome = tr.cells[1].textContent;
+        const unidade = tr.cells[2].textContent;
+        const valorUnit = parseFloat(tr.querySelector("input.valor-unitario").value) || 0;
+        const totalPeca = valorUnit;
+        const trResumo = document.createElement("tr");
+        trResumo.innerHTML = `<td>${nome}</td><td>${unidade}</td><td>${valorUnit.toFixed(2)}</td><td>${totalPeca.toFixed(2)}</td>`;
+        tbodyResumo.appendChild(trResumo);
+      }
     });
 
-    // Controla habilitação dos inputs de valor das pinturas conforme checkbox
-    pinturaForaCheckbox.addEventListener("change", () => {
-      pinturaForaInput.disabled = !pinturaForaCheckbox.checked;
-      if (!pinturaForaCheckbox.checked) pinturaForaInput.value = "";
-      atualizarTotais();
-    });
-    pinturaForaDentroCheckbox.addEventListener("change", () => {
-      pinturaForaDentroInput.disabled = !pinturaForaDentroCheckbox.checked;
-      if (!pinturaForaDentroCheckbox.checked) pinturaForaDentroInput.value = "";
-      atualizarTotais();
-    });
+    // Itens de pintura
+    if(pinturaFora.checked) {
+      const val = parseFloat(valorPinturaFora.value) || 0;
+      const trResumo = document.createElement("tr");
+      trResumo.innerHTML = `<td>Pintura Fora</td><td>serviço</td><td>${val.toFixed(2)}</td><td>${val.toFixed(2)}</td>`;
+      tbodyResumo.appendChild(trResumo);
+    }
+    if(pinturaForaEDentro.checked) {
+      const val = parseFloat(valorPinturaForaEDentro.value) || 0;
+      const trResumo = document.createElement("tr");
+      trResumo.innerHTML = `<td>Pintura Fora e Dentro</td><td>serviço</td><td>${val.toFixed(2)}</td><td>${val.toFixed(2)}</td>`;
+      tbodyResumo.appendChild(trResumo);
+    }
 
-    function atualizarTotais() {
-      let totalGeral = 0;
+    const valorTotal = parseFloat(document.getElementById("valor-total").textContent);
+    document.getElementById("out-valor-total").textContent = valorTotal.toFixed(2);
 
-      pecas.forEach((_, i) => {
-        const chk = document.querySelector(`.chk[data-index="${i}"]`);
-        const und = parseInt(document.querySelector(`.und[data-index="${i}"]`).value) || 0;
-        const val = parseFloat(document.querySelector(`.valor[data-index="${i}"]`).value) || 0;
-        const total = chk.checked ? und * val : 0;
+    document.getElementById("orcamento-final").style.display = "block";
 
-        document.querySelector(`.total[data-index="${i}"]`).textContent = total.toFixed(2);
-        totalGeral += total;
+    // Ativar botões de baixar e compartilhar
+    btnBaixarOrcamento.disabled = false;
+    btnCompartilharOrcamento.disabled = false;
+  });
+
+  // Cálculo valor que falta no recibo
+  const inputValorTotalRecibo = document.getElementById("recibo-valor-total");
+  const inputValorPagoRecibo = document.getElementById("recibo-valor-pago");
+  const inputValorFaltaRecibo = document.getElementById("recibo-valor-falta");
+
+  function atualizarValorFalta() {
+    const total = parseFloat(inputValorTotalRecibo.value) || 0;
+    const pago = parseFloat(inputValorPagoRecibo.value) || 0;
+    let falta = total - pago;
+    if(falta < 0) falta = 0;
+    inputValorFaltaRecibo.value = falta.toFixed(2);
+  }
+
+  inputValorTotalRecibo.addEventListener("input", atualizarValorFalta);
+  inputValorPagoRecibo.addEventListener("input", atualizarValorFalta);
+
+  // Gerar recibo
+  document.getElementById("form-recibo").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const cliente = document.getElementById("recibo-cliente").value;
+    const valorTotal = parseFloat(document.getElementById("recibo-valor-total").value) || 0;
+    const valorPago = parseFloat(document.getElementById("recibo-valor-pago").value) || 0;
+    const valorFalta = parseFloat(document.getElementById("recibo-valor-falta").value) || 0;
+    const pagamento = document.getElementById("recibo-pagamento").value;
+    const data = new Date();
+
+    if(!cliente || !pagamento) {
+      alert("Preencha todos os campos corretamente.");
+      return;
+    }
+
+    document.getElementById("out-recibo-cliente").textContent = cliente;
+    document.getElementById("out-recibo-valor-total").textContent = valorTotal.toFixed(2);
+    document.getElementById("out-recibo-valor-pago").textContent = valorPago.toFixed(2);
+    document.getElementById("out-recibo-valor-falta").textContent = valorFalta.toFixed(2);
+    document.getElementById("out-recibo-pagamento").textContent = pagamento;
+    document.getElementById("out-recibo-data").textContent = data.toLocaleDateString();
+
+    document.getElementById("recibo-final").style.display = "block";
+
+    // Ativar botões de baixar e compartilhar
+    btnBaixarRecibo.disabled = false;
+    btnCompartilharRecibo.disabled = false;
+  });
+
+  // Botões de baixar e compartilhar
+  const btnBaixarOrcamento = document.getElementById("btn-baixar-orcamento");
+  const btnCompartilharOrcamento = document.getElementById("btn-compartilhar-orcamento");
+  const btnBaixarRecibo = document.getElementById("btn-baixar-recibo");
+  const btnCompartilharRecibo = document.getElementById("btn-compartilhar-recibo");
+
+  async function capturarEbaixar(element) {
+    // Esconde botões antes de capturar
+    document.querySelectorAll(".no-print").forEach(el => el.classList.add("hide-buttons"));
+
+    // Captura imagem
+    const canvas = await html2canvas(element, { scale: 2 });
+
+    // Reexibe botões
+    document.querySelectorAll(".no-print").forEach(el => el.classList.remove("hide-buttons"));
+
+    // Salvar imagem
+    const link = document.createElement("a");
+    link.download = "imagem.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+
+  btnBaixarOrcamento.addEventListener("click", () => {
+    const orcamento = document.getElementById("orcamento-final");
+    capturarEbaixar(orcamento);
+  });
+
+  btnBaixarRecibo.addEventListener("click", () => {
+    const recibo = document.getElementById("recibo-final");
+    capturarEbaixar(recibo);
+  });
+
+  // Compartilhar com API Web Share (se disponível)
+  async function capturarEcompartilhar(element, nomeArquivo) {
+    if(!navigator.canShare || !navigator.canShare()) {
+      alert("Compartilhamento não suportado neste navegador.");
+      return;
+    }
+
+    // Esconde botões
+    document.querySelectorAll(".no-print").forEach(el => el.classList.add("hide-buttons"));
+
+    const canvas = await html2canvas(element, { scale: 2 });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve));
+
+    document.querySelectorAll(".no-print").forEach(el => el.classList.remove("hide-buttons"));
+
+    const file = new File([blob], nomeArquivo, { type: "image/png" });
+
+    try {
+      await navigator.share({
+        files: [file],
+        title: nomeArquivo,
+        text: `Arquivo ${nomeArquivo}`
       });
-
-      // Somar valores das pinturas selecionadas
-      if(pinturaForaCheckbox.checked && pinturaForaInput.value) {
-        totalGeral += parseFloat(pinturaForaInput.value);
-      }
-      if(pinturaForaDentroCheckbox.checked && pinturaForaDentroInput.value) {
-        totalGeral += parseFloat(pinturaForaDentroInput.value);
-      }
-
-      document.getElementById("valor-total").textContent = totalGeral.toFixed(2);
+    } catch (err) {
+      console.error("Erro ao compartilhar:", err);
     }
+  }
 
-    tabelaBody.addEventListener("change", atualizarTotais);
-    tabelaBody.addEventListener("input", atualizarTotais);
-    pinturaForaInput.addEventListener("input", atualizarTotais);
-    pinturaForaDentroInput.addEventListener("input", atualizarTotais);
+  btnCompartilharOrcamento.addEventListener("click", () => {
+    const orcamento = document.getElementById("orcamento-final");
+    capturarEcompartilhar(orcamento, "orcamento-elitecar.png");
+  });
 
-    document.getElementById("form-orcamento").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const cliente = document.getElementById("cliente").value.trim();
-      const veiculo = document.getElementById("veiculo").value.trim();
-      const data = new Date().toLocaleDateString();
-
-      if(!cliente || !veiculo){
-        alert("Por favor, preencha os campos de Cliente e Veículo.");
-        return;
-      }
-
-      document.getElementById("out-cliente").textContent = cliente;
-      document.getElementById("out-veiculo").textContent = veiculo;
-      document.getElementById("out-data").textContent = data;
-
-      const tbodyResumo = document.querySelector("#tabela-resumo tbody");
-      tbodyResumo.innerHTML = "";
-      let totalOrcamento = 0;
-
-      pecas.forEach((_, i) => {
-        const chk = document.querySelector(`.chk[data-index="${i}"]`);
-        const und = parseInt(document.querySelector(`.und[data-index="${i}"]`).value) || 0;
-        const val = parseFloat(document.querySelector(`.valor[data-index="${i}"]`).value) || 0;
-        if(chk.checked && und > 0 && val > 0) {
-          const total = und * val;
-          totalOrcamento += total;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${pecas[i]}</td>
-            <td>${und}</td>
-            <td>R$ ${val.toFixed(2)}</td>
-            <td>R$ ${total.toFixed(2)}</td>
-          `;
-          tbodyResumo.appendChild(tr);
-        }
-      });
-
-      // Adicionar pinturas no resumo se marcadas
-      if(pinturaForaCheckbox.checked && pinturaForaInput.value) {
-        const valFora = parseFloat(pinturaForaInput.value);
-        totalOrcamento += valFora;
-
-        const trPinturaFora = document.createElement("tr");
-        trPinturaFora.innerHTML = `
-          <td><strong>Pintura Fora</strong></td>
-          <td>-</td><td>-</td>
-          <td>R$ ${valFora.toFixed(2)}</td>
-        `;
-        tbodyResumo.appendChild(trPinturaFora);
-      }
-      if(pinturaForaDentroCheckbox.checked && pinturaForaDentroInput.value) {
-        const valForaDentro = parseFloat(pinturaForaDentroInput.value);
-        totalOrcamento += valForaDentro;
-
-        const trPinturaForaDentro = document.createElement("tr");
-        trPinturaForaDentro.innerHTML = `
-          <td><strong>Pintura Fora e Dentro</strong></td>
-          <td>-</td><td>-</td>
-          <td>R$ ${valForaDentro.toFixed(2)}</td>
-        `;
-        tbodyResumo.appendChild(trPinturaForaDentro);
-      }
-
-      document.getElementById("out-total").textContent = totalOrcamento.toFixed(2);
-      document.getElementById("orcamento-final").style.display = "block";
-      window.scrollTo(0, document.getElementById("orcamento-final").offsetTop);
-    });
-
-    function baixarPDF() {
-      const element = document.getElementById('pdf-content');
-      const opt = {
-        margin:       0.5,
-        filename:     'Orcamento_Elite_Car.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-
-    // Recibo de pagamento
-    document.getElementById("form-recibo").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const cliente = document.getElementById("recibo-cliente").value.trim();
-      const valor = parseFloat(document.getElementById("recibo-valor").value);
-      const pagamento = document.getElementById("recibo-pagamento").value;
-      const data = new Date().toLocaleDateString();
-
-      if(!cliente || isNaN(valor) || valor <= 0 || !pagamento) {
-        alert("Por favor, preencha corretamente todos os campos do recibo.");
-        return;
-      }
-
-      document.getElementById("recibo-out-cliente").textContent = cliente;
-      document.getElementById("recibo-out-valor").textContent = valor.toFixed(2);
-      document.getElementById("recibo-out-pagamento").textContent = pagamento;
-      document.getElementById("recibo-data").textContent = data;
-
-      document.getElementById("recibo-final").style.display = "block";
-      window.scrollTo(0, document.getElementById("recibo-final").offsetTop);
-    });
-
-    function baixarPDFRecibo() {
-      const element = document.getElementById('pdf-recibo-content');
-      const opt = {
-        margin:       0.5,
-        filename:     'Recibo_Elite_Car.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
+  btnCompartilharRecibo.addEventListener("click", () => {
+    const recibo = document.getElementById("recibo-final");
+    capturarEcompartilhar(recibo, "recibo-elitecar.png");
+  });
+</script>
 </body>
 </html>
