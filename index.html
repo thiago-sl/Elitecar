@@ -53,6 +53,26 @@
     padding: 6px;
     box-sizing: border-box;
   }
+  /* Exemplo: quando a tela tiver até 600px de largura (mobile) */
+@media only screen and (max-width: 600px) {
+  /* Exemplo de ajustes: */
+  body {
+    font-size: 14px; /* texto menor */
+  }
+  .container {
+    padding: 10px;
+    width: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  nav, header, footer {
+    /* exemplo: tornar menus mais simples */
+    flex-direction: column;
+  }
+}
+
 </style>
 </head>
 <body>
