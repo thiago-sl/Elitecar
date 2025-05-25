@@ -135,31 +135,41 @@
   }
   #tabela-resumo {
   width: 100%;
-  max-width: 100%;
   overflow-x: auto;
-  display: block;
+  -webkit-overflow-scrolling: touch; /* rolagem suave no iOS */
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
 }
 
 #tabela-resumo table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px; /* força largura mínima para ativar rolagem no mobile */
 }
 
 #tabela-resumo th, 
 #tabela-resumo td {
-  padding: 8px;
-  text-align: left;
+  padding: 10px;
   border: 1px solid #ddd;
-  white-space: nowrap;
+  text-align: left;
+  white-space: nowrap; /* evita quebra no conteúdo */
+  font-size: 14px;
 }
 
-/* Opcional: para telas pequenas, deixa a tabela com rolagem horizontal */
-@media (max-width: 600px) {
+/* Ajustes para telas menores que 480px */
+@media (max-width: 480px) {
   #tabela-resumo {
-    overflow-x: auto;
+    border: none;
+  }
+
+  #tabela-resumo th, 
+  #tabela-resumo td {
+    padding: 8px 6px;
+    font-size: 12px;
   }
 }
 
+  
   
 </style>
 </head>
@@ -302,10 +312,10 @@
 <script>
   // Dados iniciais para as peças
   const pecas = [
-    { nome: "Pneu", unidade: "un", preco: 150.00 },
-    { nome: "Parafuso", unidade: "cx", preco: 10.00 },
-    { nome: "Filtro", unidade: "un", preco: 30.00 },
-    { nome: "Óleo", unidade: "lt", preco: 25.00 }
+    { nome: "Pneu", unidade: "un", preco: 0.00 },
+    { nome: "Parafuso", unidade: "cx", preco: 0.00 },
+    { nome: "Filtro", unidade: "un", preco: 0.00 },
+    { nome: "Óleo", unidade: "lt", preco:0.00 }
   ];
 
   const tbodyTabela = document.querySelector('#tabela-itens tbody');
