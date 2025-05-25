@@ -126,12 +126,41 @@
     .assinatura-box {
       width: 100%;
     }
+   
     input.valor-unitario, input.quantidade {
       width: 100%;
       box-sizing: border-box;
       text-align: left;
     }
   }
+  #tabela-resumo {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+#tabela-resumo table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#tabela-resumo th, 
+#tabela-resumo td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+/* Opcional: para telas pequenas, deixa a tabela com rolagem horizontal */
+@media (max-width: 600px) {
+  #tabela-resumo {
+    overflow-x: auto;
+  }
+}
+
+  
 </style>
 </head>
 <body>
