@@ -39,19 +39,27 @@
     .logo-car {
       width: 200px;
       margin: auto;
-      margin-bottom: 5px; /* diminui margem para logo mais perto do texto */
+      margin-bottom: 5px;
     }
 
     .logo {
       height: 100px;
       display: block;
-      margin: 0 auto 0; /* remove margem inferior extra */
+      margin: 0 auto 0;
     }
 
     .info {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
+    }
+
+    .info.cliente {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .info.veiculo {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .datatime {
@@ -110,7 +118,7 @@
     }
 
     @media (max-width: 600px) {
-      .info {
+      .info.cliente, .info.veiculo {
         grid-template-columns: 1fr;
       }
 
@@ -136,6 +144,12 @@
       border-radius: 10px;
       margin: 20px auto;
     }
+    .download-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -149,11 +163,20 @@
   <p>Lanternagem e Pintura</p>
   <h3>Orçamento</h3>
 
-  <div class="info">
+  <!-- Dados do Cliente -->
+  <div class="info cliente">
     <input type="text" placeholder="Nome da Cliente" id="cliente">
     <input type="text" placeholder="CNPJ / CPF" id="cnpj">
     <input type="text" placeholder="Endereço" id="endereco">
     <input type="text" placeholder="Telefone / WhatsApp" id="telefone">
+  </div>
+   <h1>Dados do Veiculo</h1>
+  <!-- Dados do Veículo -->
+  <div class="info veiculo">
+   
+    <input type="text" placeholder="Modelo" id="modelo">
+    <input type="text" placeholder="Placa" id="placa">
+     <input type="text" placeholder="Cor" id="cor">
   </div>
 
   <div class="datatime">
@@ -194,6 +217,12 @@
     <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
   </div>
 </div>
+<div class="controls download-buttons">
+  <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
+  <button onclick="compartilharOrcamento()">Compartilhar</button>
+  <button onclick="voltarEdicao()">Editar Novamente</button>
+</div>
+
 
 <!-- Área de visualização -->
 <div id="preview" class="hidden">
@@ -201,6 +230,7 @@
   <img id="previewImage" src="" alt="Prévia do orçamento gerado">
   <div class="controls">
     <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
+    <button onclick="compartilharOrcamento()">Compartilhar</button>
     <button onclick="voltarEdicao()">Editar Novamente</button>
   </div>
 </div>
@@ -247,9 +277,31 @@
       valorTotalEl.innerText = total.toFixed(2);
     }
   }
+  async function gerarOrcamento() {
+  if (!validarCampos()) return;
+
+  document.getElementById('controles').classList.add('hidden');
+  document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.add('hidden'));
+  document.querySelector('.controls button[onclick="adicionarItem()"]').classList.add('hidden');
+
+  // Oculta os botões temporariamente durante a captura
+  const botoesDownload = document.querySelector('.download-buttons');
+  botoesDownload.style.display = 'none';
+
+  const canvas = await html2canvas(document.querySelector("#orcamento"), { scale: 0.7 });
+
+  // Restaura os botões após a captura
+  botoesDownload.style.display = 'flex';
+
+  document.getElementById('previewImage').src = canvas.toDataURL("image/jpeg");
+
+  document.getElementById('orcamento').classList.add('hidden');
+  document.getElementById('preview').classList.remove('hidden');
+}
+
 
   function validarCampos() {
-    const campos = ['cliente', 'cnpj', 'endereco', 'telefone', 'assinatura'];
+    const campos = ['cliente', 'cnpj', 'endereco', 'telefone', 'assinatura', 'cor', 'modelo', 'placa'];
     for (const id of campos) {
       const el = document.getElementById(id);
       if (!el.value.trim()) {
@@ -282,27 +334,30 @@
   async function gerarOrcamento() {
     if (!validarCampos()) return;
 
-    // Esconde controles para preview limpo
     document.getElementById('controles').classList.add('hidden');
     document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.add('hidden'));
     document.querySelector('.controls button[onclick="adicionarItem()"]').classList.add('hidden');
 
-    // Substitui inputs da tabela por texto para renderizar imagem limpa
     const inputsTabela = document.querySelectorAll('#listaItens input');
     inputsTabela.forEach(input => {
       const td = input.parentElement;
       td.innerHTML = input.value;
     });
 
-    // Campo assinatura vira texto
+    ['cliente', 'cnpj', 'endereco', 'telefone', 'cor', 'modelo', 'placa'].forEach(id => {
+      const el = document.getElementById(id);
+      const valor = el.value;
+      const parent = el.parentElement;
+      parent.innerHTML = `<p><strong>${el.placeholder}:</strong> ${valor}</p>`;
+    });
+
     const assinatura = document.getElementById('assinatura').value;
     const assinaturaWrapper = document.getElementById('assinaturaWrapper');
     assinaturaWrapper.innerHTML = `<p><strong>Assinatura:</strong> ${assinatura}</p>`;
 
-    // Gera canvas para preview com escala menor para melhor visualização
     const canvas = await html2canvas(document.querySelector("#orcamento"), { scale: 0.7 });
 
-    // Restaura tabela e assinatura para inputs para continuar edição
+    // Restaura inputs para continuar edição
     const tbody = document.getElementById('listaItens');
     const linhas = tbody.querySelectorAll('tr');
     linhas.forEach(linha => {
@@ -316,42 +371,72 @@
       calcularTotal();
     });
 
+    // Restaura campos extras para input
+    const infoCliente = document.querySelector('.info.cliente');
+    infoCliente.innerHTML = `
+      <input type="text" placeholder="Nome da Cliente" id="cliente" value="${document.querySelector('.info.cliente p strong') ? document.querySelector('.info.cliente p strong').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+      <input type="text" placeholder="CNPJ / CPF" id="cnpj" value="${document.querySelector('.info.cliente p strong:nth-child(2)') ? document.querySelector('.info.cliente p strong:nth-child(2)').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+      <input type="text" placeholder="Endereço" id="endereco" value="${document.querySelector('.info.cliente p strong:nth-child(3)') ? document.querySelector('.info.cliente p strong:nth-child(3)').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+      <input type="text" placeholder="Telefone / WhatsApp" id="telefone" value="${document.querySelector('.info.cliente p strong:nth-child(4)') ? document.querySelector('.info.cliente p strong:nth-child(4)').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+    `;
+
+    const infoVeiculo = document.querySelector('.info.veiculo');
+    infoVeiculo.innerHTML = `
+      <input type="text" placeholder="Cor" id="cor" value="${document.querySelector('.info.veiculo p strong') ? document.querySelector('.info.veiculo p strong').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+      <input type="text" placeholder="Modelo" id="modelo" value="${document.querySelector('.info.veiculo p strong:nth-child(2)') ? document.querySelector('.info.veiculo p strong:nth-child(2)').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+      <input type="text" placeholder="Placa" id="placa" value="${document.querySelector('.info.veiculo p strong:nth-child(3)') ? document.querySelector('.info.veiculo p strong:nth-child(3)').parentElement.textContent.replace(/.*?:/, '').trim() : ''}">
+    `;
+
     assinaturaWrapper.innerHTML = `<input type="text" id="assinatura" placeholder="Assinatura do Responsável" value="${assinatura}">`;
 
-    // Exibe preview da imagem gerada
     document.getElementById('previewImage').src = canvas.toDataURL("image/jpeg");
 
-    // Alterna visibilidade para mostrar preview e esconder form
     document.getElementById('orcamento').classList.add('hidden');
     document.getElementById('preview').classList.remove('hidden');
   }
 
+  function voltarEdicao() {
+    document.getElementById('preview').classList.add('hidden');
+    document.getElementById('orcamento').classList.remove('hidden');
+    document.getElementById('controles').classList.remove('hidden');
+    document.querySelector('.controls button[onclick="adicionarItem()"]').classList.remove('hidden');
+    document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.remove('hidden'));
+  }
+
   function baixarImagem() {
-    const img = document.getElementById('previewImage');
     const link = document.createElement('a');
-    link.download = 'orcamento.jpg';
-    link.href = img.src;
+    link.download = 'orcamento-elitecar.jpg';
+    link.href = document.getElementById('previewImage').src;
     link.click();
   }
 
-  function voltarEdicao() {
-    // Volta para edição mostrando form e controles
-    document.getElementById('orcamento').classList.remove('hidden');
-    document.getElementById('preview').classList.add('hidden');
+  async function compartilharOrcamento() {
+    const img = document.getElementById('previewImage');
 
-    // Restaura controles e botões
-    document.getElementById('controles').classList.remove('hidden');
-    document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.remove('hidden'));
-    document.querySelector('.controls button[onclick="adicionarItem()"]').classList.remove('hidden');
+    if (!navigator.canShare || !navigator.canShare({ files: [] })) {
+      alert('Este navegador não suporta compartilhamento de arquivos.');
+      return;
+    }
 
-    // Restaura campo assinatura para input (se foi alterado)
-    let assinaturaWrapper = document.getElementById('assinaturaWrapper');
-    if (!document.getElementById('assinatura')) {
-      assinaturaWrapper.innerHTML = `<input type="text" id="assinatura" placeholder="Assinatura do Responsável">`;
+    try {
+      const response = await fetch(img.src);
+      const blob = await response.blob();
+      const file = new File([blob], 'orcamento.jpg', { type: 'image/jpeg' });
+
+      await navigator.share({
+        files: [file],
+        title: 'Orçamento Elite Car',
+        text: 'Confira o orçamento gerado pela Elite Car.',
+      });
+    } catch (err) {
+      alert('Erro ao compartilhar: ' + err);
     }
   }
 
   atualizarDataHora();
+  adicionarItem();
+  calcularTotal();
+
 </script>
 
 </body>
