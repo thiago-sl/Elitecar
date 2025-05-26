@@ -142,14 +142,13 @@
     margin-bottom: 1rem;
   }
 
-  table
-   {
-    width:100%;
+  #tabela-resumo {
+    width:50%;
     border-collapse: collapse;
     min-width: 600px; /* largura mínima para evitar quebra da tabela */
   }
 
-  table th,
+  #tabela-resumo th,
   #tabela-resumo td {
     padding: 10px;
     border: 1px solid #ddd;
@@ -159,49 +158,27 @@
   }
 
   /* Ajustes para telas pequenas (mobile) */
-     @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead tr {
-        display: none; /* Oculta o cabeçalho */
-      }
-
-      tr {
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 8px;
-        background: #f9f9f9;
-      }
-
-      td {
-        /* Cada célula vira linha separada */
-        padding-left: 50%;
-        position: relative;
-        text-align: left;
-        border: none;
-        border-bottom: 1px solid #ddd;
-        font-size: 14px;
-      }
-
-      td:last-child {
-        border-bottom: 0;
-      }
-
-      /* Adiciona o título da coluna antes do conteúdo da célula */
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 15px;
-        top: 8px;
-        font-weight: bold;
-        white-space: nowrap;
-      }
+  @media (max-width: 768px) {
+    #form-orcamento {
+      border: none;
     }
 
- 
+    #tabela-resumo th,
+    #tabela-resumo td {
+      padding: 8px 6px;
+      font-size: 12px;
+    }
+  }
+    .logo-car {
+      width: 200px;
+      padding: 1px;
+      margin: auto;
+    
+    }
+
+    .logo {
+      height: 100px;
+    }
 
   
   
@@ -209,18 +186,21 @@
 </head>
 <body>
 
-<h1>Elite Car - Orçamento e Recibo</h1>
 
 <form id="form-orcamento">
+    <div class="logo-car">
+    <img src="./img/imgg.avif "  alt="EliteCar Logo" class="logo">
+   
+  </div>
+<h1>Elite Car - Orçamento e Recibo</h1>
   <h2>Orçamento</h2>
-
   <label for="cliente">Nome do Cliente:</label>
   <input type="text" id="cliente" required />
 
-  <label for="veiculo">Veículo:</label>
+  <label for="veiculo">Veículo / Cor / Ano / Placa:</label>
   <input type="text" id="veiculo" required />
 
-  <table id="tabela-itens" role="table">
+  <table id="tabela-itens">
     <thead>
       <tr>
         <th>Selecionar</th>
@@ -232,15 +212,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td data-label="Selecionar"><input type="checkbox" /></td>
-        <td data-label="Peça">Parachoque</td>
-        <td data-label="Unidade">Un</td>
-        <td data-label="Quantidade">1</td>
-        <td data-label="Valor Unitário (R$)">200,00</td>
-        <td data-label="Total (R$)">200,00</td>
-      </tr>
-      <!-- Linhas extras via JS -->
+      <!-- Linhas criadas via JS -->
     </tbody>
   </table>
 
@@ -257,17 +229,20 @@
 
 <section id="orcamento-final">
   <h2>Resumo do Orçamento</h2>
-
-  <p><strong>Elite Car Serviços Automotivos</strong></p>
-  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
-  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+   <div class="logo-car">
+    <img src="./img/imgg.avif "  alt="EliteCar Logo" class="logo">
+   
+  </div>
+  <h1><strong>Elite Car Serviços Automotivos</strong></h1>
+  <p>Qr3 conjunto N casa 4</p>
+  <p>Telefone: (61) 98163-7286</p>
   <hr />
 
   <p><strong>Data:</strong> <span id="out-data"></span> <strong>Hora:</strong> <span id="out-hora"></span></p>
   <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
   <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
 
-  <table id="tabela-resumo" role="table">
+  <table id="tabela-resumo">
     <thead>
       <tr>
         <th>Peça</th>
@@ -277,18 +252,10 @@
         <th>Total (R$)</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td data-label="Peça">Porta</td>
-        <td data-label="Unidade">Un</td>
-        <td data-label="Quantidade">2</td>
-        <td data-label="Valor Unitário (R$)">150,00</td>
-        <td data-label="Total (R$)">300,00</td>
-      </tr>
-    </tbody>
+    <tbody></tbody>
   </table>
 
-  <p><strong>Valor Total: R$ <span id="out-valor-total">300,00</span></strong></p>
+  <p><strong>Valor Total: R$ <span id="out-valor-total"></span></strong></p>
 
   <div class="assinaturas">
     <div class="assinatura-box">Assinatura do Cliente</div>
@@ -301,13 +268,15 @@
   </div>
 </section>
 
-
 <form id="form-recibo" style="margin-top: 40px;">
   <h2>Recibo</h2>
-
-  <p><strong>Elite Car Serviços Automotivos</strong></p>
-  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
-  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+   <div class="logo-car">
+    <img src="./img/imgg.avif "  alt="EliteCar Logo" class="logo">
+   
+  </div>
+  <h1><strong>Elite Car Serviços Automotivos</strong></h1>
+  <p>Endereço: Qr3 conjunto N casa 4</p>
+  <p>Telefone: (61) 98163-7286 </p>
   <hr />
 
   <label for="recibo-cliente">Nome do Cliente:</label>
@@ -327,8 +296,8 @@
     <option value="">Selecione</option>
     <option value="Dinheiro">Dinheiro</option>
     <option value="Pix">Pix</option>
-    <option value="Cartão">Cartão</option>
-    <option value="Outro">Outro</option>
+   <option value="Credito">Credito</option>
+    <option value="Debito">Debito</option>
   </select>
 
   <button type="submit">Gerar Recibo</button>
@@ -336,10 +305,13 @@
 
 <section id="recibo-final" style="margin-bottom: 60px;">
   <h2>Recibo</h2>
-
-  <p><strong>Elite Car Serviços Automotivos</strong></p>
-  <p>Qr3 conjunto N Casa 6</p>
-  <p>Telefone: (61) 981637286 </p>
+   <div class="logo-car">
+    <img src="./img/imgg.avif "  alt="EliteCar Logo" class="logo">
+   
+  </div>
+  <h1><strong>Elite Car Serviços Automotivos</strong></h1>
+  <p>Endereço: Qr3 conjunto N casa 4</p>
+  <p>Telefone: (61) 98163-7286 </p>
   <hr />
 
   <p><strong>Data:</strong> <span id="recibo-data"></span></p>
@@ -364,10 +336,10 @@
 <script>
   // Dados iniciais para as peças
   const pecas = [
-    { nome: "Pneu", unidade: "un", preco: 0.00 },
-    { nome: "Parafuso", unidade: "cx", preco: 0.00 },
-    { nome: "Filtro", unidade: "un", preco: 0.00 },
-    { nome: "Óleo", unidade: "lt", preco:0.00 }
+    { nome: "Capo", unidade: "un", preco: 0.00 },
+    { nome: "Porta malas", unidade: "cx", preco: 0.00 },
+    { nome: "Paralama dinhanteiro", unidade: "un", preco: 0.00 },
+    { nome: "Retrovisor", unidade: "lt", preco:0.00 }
   ];
 
   const tbodyTabela = document.querySelector('#tabela-itens tbody');
@@ -520,10 +492,10 @@
 
     // Pega dados do cliente e veículo
     const cliente = document.getElementById('cliente').value.trim();
-    const veiculo = document.getElementById('veiculo').value.trim();
+    const veiculo = document.getElementById('veiculo ').value.trim();
 
     if (!cliente || !veiculo) {
-      alert('Preencha nome do cliente e veículo.');
+      alert('Preencha nome do cliente e veículo .');
       return;
     }
 
