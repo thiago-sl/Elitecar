@@ -242,6 +242,16 @@
       width: 100%;
     }
   }
+
+  /* Esconder botões no PDF */
+  .no-print {
+    display: block;
+  }
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -308,7 +318,7 @@
           <th>Descrição</th>
           <th>Valor Unitário</th>
           <th>Total</th>
-          <th class="botao-coluna">Ação</th>
+          <th class="botao-coluna no-print">Ação</th>
         </tr>
       </thead>
       <tbody id="listaItens"></tbody>
@@ -316,7 +326,7 @@
     <div class="total">Valor Total: R$ <span id="valorTotal">0,00</span></div>
   </div>
 
-  <div class="controls" id="controles">
+  <div class="controls no-print" id="controles">
     <button onclick="adicionarItem()">➕ Adicionar Item</button>
     <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
   </div>
@@ -332,9 +342,9 @@
 </div>
 
 <!-- Controles após geração -->
-<div class="controls" id="acoesPreview" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px; display: none;">
-  <button onclick="baixarPDF()">Confirmar e Baixar PDF</button>
-  <button onclick="compartilharOrcamento()">Compartilhar</button>
+<div class="controls no-print" id="acoesPreview" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px; display: none;">
+  <button onclick="baixarPDF()">Baixar PDF</button>
+  <button onclick="compartilharWhatsApp()">Compartilhar via WhatsApp</button>
   <button onclick="voltarEdicao()">Editar Novamente</button>
 </div>
 
@@ -364,7 +374,7 @@
       <td><input type="text" placeholder="Descrição do serviço" /></td>
       <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()" /></td>
       <td>R$ 0,00</td>
-      <td class="botao-coluna"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
+      <td class="botao-coluna no-print"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
     `;
 
     tbody.appendChild(linha);
@@ -407,35 +417,8 @@
     });
   }
 
-  function baixarPDF() {
-    const orcamentoEl = document.getElementById('orcamento');
-    html2canvas(orcamentoEl, { scale: 3 }).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      // Ajustar a imagem para caber no pdf mantendo proporção
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgWidth = pdfWidth * 0.95;
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', (pdfWidth - imgWidth) / 2, 20, imgWidth, imgHeight);
-      pdf.save('Orcamento_EliteCar.pdf');
-    });
-  }
-
-  function compartilharOrcamento() {
-    alert('Função de compartilhamento ainda não implementada.');
-  }
-
   function voltarEdicao() {
-    // Esconde preview e controles finais
+    // Esconde preview e controles de preview
     document.getElementById('preview').classList.add('hidden');
     document.getElementById('acoesPreview').style.display = 'none';
 
@@ -443,10 +426,68 @@
     document.getElementById('controles').style.display = 'flex';
   }
 
-  // Inicializa data/hora e adiciona um item para começar
-  atualizarDataHora();
-  adicionarItem();
+  async function baixarPDF() {
+    const orcamentoEl = document.getElementById('orcamento');
 
+    // Gera canvas com escala para evitar quebra de página e garantir uma página única
+    const canvas = await html2canvas(orcamentoEl, { scale: 3 });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    // Dimensões A4 em pt (210mm x 297mm) - converter para px dependendo da resolução
+    const pdf = new jsPDF({
+      unit: 'pt',
+      format: 'a4',
+      compress: true
+    });
+
+    // Ajustar imagem para caber na página inteira (sem quebra)
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Ajusta a escala da imagem para caber em uma página A4, mantendo proporção
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgWidth = imgProps.width;
+    const imgHeight = imgProps.height;
+
+    let widthRatio = pageWidth / imgWidth;
+    let heightRatio = pageHeight / imgHeight;
+    let scale = Math.min(widthRatio, heightRatio);
+
+    const imgRenderWidth = imgWidth * scale;
+    const imgRenderHeight = imgHeight * scale;
+
+    // Adiciona a imagem ao PDF, centralizada verticalmente e horizontalmente
+    const x = (pageWidth - imgRenderWidth) / 2;
+    const y = (pageHeight - imgRenderHeight) / 2;
+
+    pdf.addImage(imgData, 'PNG', x, y, imgRenderWidth, imgRenderHeight);
+
+    pdf.save('Orcamento_EliteCar.pdf');
+  }
+
+  function compartilharWhatsApp() {
+    // Mensagem base
+    const nome = document.getElementById('cliente').value || 'Cliente';
+    const modelo = document.getElementById('modelo').value || 'veículo';
+    const valorTotal = document.getElementById('valorTotal').innerText || '0,00';
+
+    // Texto para compartilhar no WhatsApp
+    const mensagem = encodeURIComponent(
+      `Olá ${nome}! Aqui está o orçamento para o seu ${modelo}.\nValor Total: R$ ${valorTotal}\n\nEntre em contato conosco para mais detalhes!`
+    );
+
+    // Link do WhatsApp web para abrir conversa
+    const urlWhatsApp = `https://api.whatsapp.com/send?text=${mensagem}`;
+
+    window.open(urlWhatsApp, '_blank');
+  }
+
+  // Atualiza data e hora ao carregar a página
+  window.onload = () => {
+    atualizarDataHora();
+    adicionarItem();
+  };
 </script>
 
 </body>
