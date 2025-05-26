@@ -3,318 +3,282 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Orçamento e Recibo - Elite Car</title>
+  <title>Orçamento e Recibo Elite Car</title>
   <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
-    }
     body {
       font-family: Arial, sans-serif;
-      margin: 0; padding: 10px;
-      background: #f5f5f5;
-      color: #333;
+      margin: 1rem;
+      background: #f8f9fa;
     }
     h1, h2 {
       text-align: center;
-      margin-bottom: 15px;
+      color: #2c3e50;
     }
-    button {
-      cursor: pointer;
-      background-color: #2980b9;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 5px;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #1c5980;
-    }
-    input, select, textarea {
-      font-size: 1rem;
-      padding: 6px 8px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 100%;
-      margin-top: 4px;
-      margin-bottom: 12px;
+    #formContainer, #previewOrcamentoContainer, #dadosRecibo, #previewReciboContainer {
+      max-width: 700px;
+      margin: 1rem auto;
+      background: white;
+      padding: 1rem 2rem 2rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
     label {
-      font-weight: 600;
       display: block;
-    }
-    fieldset {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      background: white;
-    }
-    legend {
+      margin-top: 0.8rem;
       font-weight: bold;
-      padding: 0 10px;
-      color: #2980b9;
     }
-
-    /* Layout responsivo usando flexbox para os inputs */
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 10px;
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.4rem;
+      margin-top: 0.2rem;
+      box-sizing: border-box;
     }
-    .form-group {
-      flex: 1 1 200px;
-      min-width: 150px;
-    }
-
-    /* Tabela do orçamento */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
-      background: white;
+      margin-top: 1rem;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px 10px;
-      text-align: left;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      text-align: center;
     }
     th {
-      background-color: #2980b9;
+      background: #2980b9;
       color: white;
     }
-    td button {
-      background-color: #e74c3c;
-      padding: 5px 8px;
-      font-size: 0.9rem;
-      border-radius: 4px;
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    td button:hover {
-      background-color: #c0392b;
+    button:hover {
+      background: #3498db;
     }
-
-    /* Container principal */
-    #formContainer, #previewOrcamentoContainer, #dadosRecibo, #previewReciboContainer {
-      max-width: 900px;
-      margin: 0 auto 40px auto;
-      background: white;
-      padding: 20px 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    #tabelaOrcamento {
+      margin-top: 1rem;
+      display: none;
     }
-
-    /* Preview do orçamento e recibo */
-    #previewOrcamento, #previewRecibo {
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: inset 0 0 10px #ddd;
+    .small-input {
+      width: 70px;
     }
-    .empresa-logo {
-      width: 150px;
-      display: block;
-      margin: 0 auto 15px auto;
-    }
-    .empresa-nome {
+    /* Preview recibo styling */
+    #previewReciboContainer, #previewOrcamentoContainer {
       text-align: center;
-      color: #2980b9;
-      margin: 0 0 20px 0;
+      position: relative;
     }
-    .section-title {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin: 15px 0 10px 0;
-      border-bottom: 2px solid #2980b9;
-      padding-bottom: 5px;
+    #previewRecibo, #previewOrcamento {
+      font-size: 1rem;
+      color: #2c3e50;
+      line-height: 1.4;
+      border: 1px solid #ddd;
+      padding: 1rem 2rem 2rem 2rem;
+      border-radius: 8px;
+      background: white;
+      margin-top: 1rem;
+    }
+    #previewRecibo h2.empresa-nome, #previewOrcamento h2.empresa-nome {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #34495e;
+    }
+    #previewRecibo table, #previewOrcamento table {
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    #previewRecibo .section-title, #previewOrcamento .section-title {
+      font-weight: bold;
+      margin-top: 1rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
+      color: #2980b9;
     }
     .action-buttons {
-      text-align: center;
-      margin-top: 20px;
+      margin-top: 1rem;
       display: flex;
+      gap: 10px;
       justify-content: center;
-      gap: 15px;
       flex-wrap: wrap;
     }
-
-    /* Responsividade para telas menores */
-    @media (max-width: 600px) {
-      .form-row {
-        flex-direction: column;
-      }
-      .form-group {
-        min-width: 100%;
-      }
-      table, th, td {
-        font-size: 0.9rem;
-      }
-      button {
-        width: 100%;
-        padding: 12px;
-      }
-      .action-buttons {
-        flex-direction: column;
-      }
-      .empresa-logo {
-        width: 120px;
-      }
+    /* Logo style */
+    .empresa-logo {
+      max-width: 150px;
+      margin: 0 auto 1rem auto;
+      display: block;
+    }
+    P{
+        text-align: center;
     }
   </style>
 </head>
 <body>
-
-  <h1>Elite Car - Orçamento e Recibo</h1>
-
+  <h1>Elite Car</h1>
+<p>ORÇAMENTO E RECIBO</p>
   <div id="formContainer">
-    <fieldset>
-      <legend>Adicionar Item ao Orçamento</legend>
+    <h2>Adicionar Item ao Orçamento</h2>
+    <label for="descricaoItem">Descrição:</label>
+    <input type="text" id="descricaoItem" placeholder="Ex: Pintura completa " />
+    
+    
+    <label for="quantidadeItem">Quantidade:</label>
+    <input type="number" id="quantidadeItem" min="1" value="1" class="small-input" />
+    
+    <label for="precoUnitarioItem">Preço Unitário (R$):</label>
+    <input type="text" id="precoUnitarioItem" placeholder="Ex: 150,00" />
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="descricaoItem">Descrição</label>
-          <input type="text" id="descricaoItem" placeholder="Descrição do serviço/produto" />
-        </div>
-        <div class="form-group">
-          <label for="modeloItem">Modelo</label>
-          <input type="text" id="modeloItem" placeholder="Modelo do veículo" />
-        </div>
-      </div>
+    <button onclick="adicionarItem()">Adicionar Item</button>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="corItem">Cor</label>
-          <input type="text" id="corItem" placeholder="Cor do veículo" />
-        </div>
-        <div class="form-group">
-          <label for="placaItem">Placa</label>
-          <input type="text" id="placaItem" placeholder="Placa do veículo" />
-        </div>
-        <div class="form-group">
-          <label for="quantidadeItem">Quantidade</label>
-          <input type="number" id="quantidadeItem" min="1" value="1" />
-        </div>
-        <div class="form-group">
-          <label for="precoUnitarioItem">Preço Unitário (R$)</label>
-          <input type="text" id="precoUnitarioItem" placeholder="0,00" />
-        </div>
-      </div>
-
-      <button onclick="adicionarItem()">Adicionar Item</button>
-    </fieldset>
-
-    <table id="tabelaOrcamento" style="display:none;">
+    <table id="tabelaOrcamento">
       <thead>
         <tr>
           <th>Descrição</th>
-          <th>Modelo</th>
-          <th>Cor</th>
-          <th>Placa</th>
-          <th>Quantidade</th>
-          <th>Preço Unitário</th>
-          <th>Subtotal</th>
+          <th>Qtd</th>
+          <th>Preço Unitário (R$)</th>
+          <th>Subtotal (R$)</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody id="corpoTabelaOrcamento"></tbody>
       <tfoot>
         <tr>
-          <td colspan="6" style="text-align:right; font-weight:bold;">Total:</td>
-          <td id="totalOrcamento" style="font-weight:bold;">0,00</td>
-          <td></td>
+          <th colspan="3">Total</th>
+          <th id="totalOrcamento">0,00</th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
 
-    <div style="text-align:center;">
-      <button onclick="gerarPreviewOrcamento()">Pré-visualizar Orçamento</button>
-    </div>
+    <button onclick="gerarPreviewOrcamento()">Pré-visualizar Orçamento</button>
   </div>
 
   <div id="previewOrcamentoContainer" style="display:none;">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTUwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiByeD0iMTAiIGZpbGw9IiMyOTgwYjkiLz4KPHRleHQgeD0iNzUiIHk9IjMwIiBmb250LXNpemU9IjIwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPkVsaXRlIENhcjwvdGV4dD4KPC9zdmc+" alt="Logo Elite Car" class="empresa-logo" />
-    <h2 class="empresa-nome">Elite Car</h2>
+    <h2>Pré-visualização do Orçamento</h2>
+    <div id="previewOrcamento">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTUwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiByeD0iMTAiIGZpbGw9IiMyOTgwYjkiLz4KPHRleHQgeD0iNzUiIHk9IjMwIiBmb250LXNpemU9IjIwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPkVsaXRlIENhcjwvdGV4dD4KPC9zdmc+" alt="Logo Elite Car" class="empresa-logo" />
+      <h2 class="empresa-nome">Elite Car</h2>
+      <div class="section-title">Dados da Empresa</div>
+      <table style="margin:auto; text-align:left;">
+        <tbody>
+          <tr><td><strong>CNPJ:</strong></td><td>00.000.000/0001-00</td></tr>
+          <tr><td><strong>Endereço:</strong></td><td>Qr3 Conjunto N Casa 4</td></tr>
+          <tr><td><strong>Telefone:</strong></td><td>(61)98163-7286</td></tr>
+        </tbody>
+      </table>
 
-    <div class="section-title">Orçamento</div>
-    <table>
-      <thead>
-        <tr>
-          <th>Descrição</th>
-          <th>Modelo</th>
-          <th>Cor</th>
-          <th>Placa</th>
-          <th>Quantidade</th>
-          <th>Preço Unitário</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody id="previewTabelaCorpo"></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="6" style="text-align:right; font-weight:bold;">Total:</td>
-          <td id="previewTotalOrcamento" style="font-weight:bold;">0,00</td>
-        </tr>
-      </tfoot>
-    </table>
-
+      <table style="margin:auto;">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Qtd</th>
+            <th>Preço Unitário (R$)</th>
+            <th>Subtotal (R$)</th>
+          </tr>
+        </thead>
+        <tbody id="previewTabelaCorpo"></tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3">Total</th>
+            <th id="previewTotalOrcamento">0,00</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
     <div class="action-buttons">
       <button onclick="voltarEdicaoOrcamento()">Voltar para edição</button>
-      <button onclick="baixarOrcamento()">Baixar Orçamento (JPG)</button>
       <button onclick="mostrarFormRecibo()">Gerar Recibo</button>
+      <button onclick="baixarOrcamento()">Baixar Orçamento (JPG)</button>
       <button onclick="compartilharOrcamento()">Compartilhar Orçamento</button>
     </div>
   </div>
 
   <div id="dadosRecibo" style="display:none;">
+    <h2>Dados para o Recibo</h2>
     <fieldset>
-      <legend>Dados da Empresa</legend>
+      <legend>Dados da Empresa (Elite Car)</legend>
       <label for="empresaNome">Nome da Empresa:</label>
       <input type="text" id="empresaNome" value="Elite Car" />
       <label for="empresaCNPJ">CNPJ:</label>
       <input type="text" id="empresaCNPJ" value="00.000.000/0001-00" />
       <label for="empresaEndereco">Endereço:</label>
-      <input type="text" id="empresaEndereco" value="Brasília, DF" />
+      <input type="text" id="empresaEndereco" value="Rua das Flores, 123 - Cidade" />
       <label for="empresaTelefone">Telefone:</label>
-      <input type="text" id="empresaTelefone" value="(61) 98163-7286" />
+      <input type="text" id="empresaTelefone" value="(11) 99999-9999" />
     </fieldset>
 
     <fieldset>
       <legend>Dados do Cliente</legend>
-      <label for="clienteNome">Nome do Cliente:</label>
-      <input type="text" id="clienteNome" placeholder="Nome completo" />
+      <label for="clienteNome">Nome:</label>
+      <input type="text" id="clienteNome" placeholder="Nome do cliente" />
       <label for="clienteCPF">CPF:</label>
-      <input type="text" id="clienteCPF" placeholder="000.000.000-00" />
+      <input type="text" id="clienteCPF" placeholder="CPF do cliente" />
       <label for="clienteEndereco">Endereço:</label>
-      <input type="text" id="clienteEndereco" placeholder="Endereço completo" />
+      <input type="text" id="clienteEndereco" placeholder="Endereço do cliente" />
       <label for="clienteTelefone">Telefone:</label>
-      <input type="text" id="clienteTelefone" placeholder="(XX) XXXXX-XXXX" />
+      <input type="text" id="clienteTelefone" placeholder="Telefone do cliente" />
     </fieldset>
 
     <fieldset>
-      <legend>Dados do Recibo</legend>
-      <label for="reciboValor">Valor (R$):</label>
-      <input type="text" id="reciboValor" readonly />
-      <label for="reciboDescricao">Descrição:</label>
-      <textarea id="reciboDescricao" rows="3" placeholder="Descrição do serviço ou produto"></textarea>
-      <label for="reciboData">Data:</label>
-      <input type="date" id="reciboData" />
+      <legend>Pagamento</legend>
+      <label>Forma de pagamento:</label>
+      <label><input type="radio" name="formaPagamento" value="Débito" checked /> Débito</label>
+      <label><input type="radio" name="formaPagamento" value="Crédito" /> Crédito</label>
+      <label><input type="radio" name="formaPagamento" value="Dinheiro" /> Dinheiro</label>
+
+      <label for="valorTotal">Valor Total (R$):</label>
+      <input type="text" id="valorTotal" readonly />
+
+      <label for="valorEntrada">Valor de Entrada (R$):</label>
+      <input type="number" id="valorEntrada" min="0" value="0" oninput="calcularRestante()" />
+
+      <label for="valorRestante">Valor Restante (R$):</label>
+      <input type="text" id="valorRestante" readonly />
     </fieldset>
 
-    <div style="text-align:center;">
-      <button onclick="gerarPreviewRecibo()">Pré-visualizar Recibo</button>
-      <button onclick="voltarEdicaoOrcamento()" style="margin-left: 10px;">Voltar para Orçamento</button>
-    </div>
+    <button onclick="gerarPreviewRecibo()">Pré-visualizar Recibo</button>
+    <button onclick="voltarEdicaoOrcamento()">Voltar para Orçamento</button>
   </div>
 
   <div id="previewReciboContainer" style="display:none;">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTUwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiByeD0iMTAiIGZpbGw9IiMyOTgwYjkiLz4KPHRleHQgeD0iNzUiIHk9IjMwIiBmb250LXNpemU9IjIwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPkVsaXRlIENhcjwvdGV4dD4KPC9zdmc+" alt="Logo Elite Car" class="empresa-logo" />
-    <h2 class="empresa-nome">Elite Car</h2>
+    <h2>Pré-visualização do Recibo</h2>
+    <div id="previewRecibo">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTUwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiByeD0iMTAiIGZpbGw9IiMyOTgwYjkiLz4KPHRleHQgeD0iNzUiIHk9IjMwIiBmb250LXNpemU9IjIwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPkVsaXRlIENhcjwvdGV4dD4KPC9zdmc+" alt="Logo Elite Car" class="empresa-logo" />
+      <h2 class="empresa-nome" id="previewEmpresaNome">Elite Car</h2>
+      <div class="section-title">Dados da Empresa</div>
+      <table style="margin:auto; text-align:left;">
+        <tbody>  
+          <tr><td><strong>CNPJ:</strong></td><td>00.000.000/0001-00</td></tr>
+          <tr><td><strong>Endereço:</strong></td><td>Qr3 Conjunto N Casa 4</td></tr>
+          <tr><td><strong>Telefone:</strong></td><td>(61)98163-7286</td></tr>
+        </tbody>
+      </table>
 
-    <div class="section-title">Recibo</div>
-    <p id="reciboTexto" style="line-height: 1.5; font-size: 1rem;"></p>
+      <div class="section-title">Dados do Cliente</div>
+      <table style="margin:auto; text-align:left;">
+        <tbody>
+          <tr><td><strong>Nome:</strong></td><td id="previewClienteNome"></td></tr>
+          <tr><td><strong>CPF:</strong></td><td id="previewClienteCPF"></td></tr>
+          <tr><td><strong>Endereço:</strong></td><td id="previewClienteEndereco"></td></tr>
+          <tr><td><strong>Telefone:</strong></td><td id="previewClienteTelefone"></td></tr>
+        </tbody>
+      </table>
 
+      <div class="section-title">Pagamento</div>
+      <table style="margin:auto; text-align:left;">
+        <tbody>
+          <tr><td><strong>Forma de Pagamento:</strong></td><td id="previewFormaPagamento"></td></tr>
+          <tr><td><strong>Valor Total:</strong></td><td id="previewValorTotal"></td></tr>
+          <tr><td><strong>Valor de Entrada:</strong></td><td id="previewValorEntrada"></td></tr>
+          <tr><td><strong>Valor Restante:</strong></td><td id="previewValorRestante"></td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="action-buttons">
       <button onclick="voltarEdicaoRecibo()">Voltar para edição</button>
       <button onclick="baixarRecibo()">Baixar Recibo (JPG)</button>
@@ -326,125 +290,94 @@
   <script>
     let itensOrcamento = [];
 
-    function precoStringParaNumero(str) {
-      return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
-    }
-
-    function numeroParaPreco(num) {
-      return num.toFixed(2).replace('.', ',');
+    function formatarMoeda(valor) {
+      return Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     function adicionarItem() {
       const descricao = document.getElementById('descricaoItem').value.trim();
-      const modelo = document.getElementById('modeloItem').value.trim();
-      const cor = document.getElementById('corItem').value.trim();
-      const placa = document.getElementById('placaItem').value.trim();
-      const quantidade = parseInt(document.getElementById('quantidadeItem').value);
-      const precoStr = document.getElementById('precoUnitarioItem').value.trim();
+      let quantidade = parseInt(document.getElementById('quantidadeItem').value);
+      let precoUnitario = document.getElementById('precoUnitarioItem').value.replace(',', '.');
+      precoUnitario = parseFloat(precoUnitario);
 
       if (!descricao) {
-        alert('Informe a descrição do item.');
-        return;
-      }
-      if (!modelo) {
-        alert('Informe o modelo do veículo.');
-        return;
-      }
-      if (!cor) {
-        alert('Informe a cor do veículo.');
-        return;
-      }
-      if (!placa) {
-        alert('Informe a placa do veículo.');
+        alert('Por favor, insira a descrição do item.');
         return;
       }
       if (!quantidade || quantidade < 1) {
-        alert('Informe uma quantidade válida.');
+        alert('Quantidade inválida.');
         return;
       }
-      if (!precoStr) {
-        alert('Informe o preço unitário.');
-        return;
-      }
-      const preco = precoStringParaNumero(precoStr);
-      if (preco <= 0) {
-        alert('Preço unitário deve ser maior que zero.');
+      if (isNaN(precoUnitario) || precoUnitario < 0) {
+        alert('Preço unitário inválido.');
         return;
       }
 
-      itensOrcamento.push({ descricao, modelo, cor, placa, quantidade, preco });
-      atualizarTabela();
-      limparCamposItem();
-    }
+      itensOrcamento.push({ descricao, quantidade, precoUnitario });
+      atualizarTabelaOrcamento();
 
-    function limparCamposItem() {
+      // Limpar campos
       document.getElementById('descricaoItem').value = '';
-      document.getElementById('modeloItem').value = '';
-      document.getElementById('corItem').value = '';
-      document.getElementById('placaItem').value = '';
-      document.getElementById('quantidadeItem').value = 1;
+      document.getElementById('quantidadeItem').value = '1';
       document.getElementById('precoUnitarioItem').value = '';
-      document.getElementById('descricaoItem').focus();
     }
 
-    function atualizarTabela() {
-      const tbody = document.getElementById('corpoTabelaOrcamento');
-      tbody.innerHTML = '';
+    function atualizarTabelaOrcamento() {
+      const corpoTabela = document.getElementById('corpoTabelaOrcamento');
+      corpoTabela.innerHTML = '';
       let total = 0;
-      itensOrcamento.forEach((item, index) => {
-        const subtotal = item.quantidade * item.preco;
+
+      itensOrcamento.forEach((item, i) => {
+        const subtotal = item.quantidade * item.precoUnitario;
         total += subtotal;
+
         const tr = document.createElement('tr');
-        tr.innerHTML = `
+
+        tr.innerHTML = 
           <td>${item.descricao}</td>
-          <td>${item.modelo}</td>
-          <td>${item.cor}</td>
-          <td>${item.placa}</td>
           <td>${item.quantidade}</td>
-          <td>R$ ${numeroParaPreco(item.preco)}</td>
-          <td>R$ ${numeroParaPreco(subtotal)}</td>
-          <td><button onclick="removerItem(${index})" aria-label="Remover item ${item.descricao}">X</button></td>
-        `;
-        tbody.appendChild(tr);
+          <td>${formatarMoeda(item.precoUnitario)}</td>
+          <td>${formatarMoeda(subtotal)}</td>
+          <td><button onclick="removerItem(${i})">Excluir</button></td>
+        ;
+        corpoTabela.appendChild(tr);
       });
-      document.getElementById('totalOrcamento').textContent = `R$ ${numeroParaPreco(total)}`;
-      document.getElementById('tabelaOrcamento').style.display = itensOrcamento.length ? 'table' : 'none';
+
+      document.getElementById('totalOrcamento').textContent = formatarMoeda(total);
+
+      document.getElementById('tabelaOrcamento').style.display = itensOrcamento.length > 0 ? 'table' : 'none';
+
+      // Atualizar valor total do orçamento no recibo automaticamente
+      document.getElementById('valorTotal').value = formatarMoeda(total);
+      calcularRestante();
     }
 
     function removerItem(index) {
-      if (confirm('Deseja remover este item do orçamento?')) {
-        itensOrcamento.splice(index, 1);
-        atualizarTabela();
-      }
+      itensOrcamento.splice(index, 1);
+      atualizarTabelaOrcamento();
     }
 
     function gerarPreviewOrcamento() {
       if (itensOrcamento.length === 0) {
-        alert('Adicione pelo menos um item ao orçamento.');
+        alert('Adicione pelo menos um item para gerar o orçamento.');
         return;
       }
-      const corpoPreview = document.getElementById('previewTabelaCorpo');
-      corpoPreview.innerHTML = '';
+      const previewTabelaCorpo = document.getElementById('previewTabelaCorpo');
+      previewTabelaCorpo.innerHTML = '';
       let total = 0;
       itensOrcamento.forEach(item => {
-        const subtotal = item.quantidade * item.preco;
+        const subtotal = item.quantidade * item.precoUnitario;
         total += subtotal;
         const tr = document.createElement('tr');
-        tr.innerHTML = `
+        tr.innerHTML = 
           <td>${item.descricao}</td>
-          <td>${item.modelo}</td>
-          <td>${item.cor}</td>
-          <td>${item.placa}</td>
           <td>${item.quantidade}</td>
-          <td>R$ ${numeroParaPreco(item.preco)}</td>
-          <td>R$ ${numeroParaPreco(subtotal)}</td>
-        `;
-        corpoPreview.appendChild(tr);
+          <td>${formatarMoeda(item.precoUnitario)}</td>
+          <td>${formatarMoeda(subtotal)}</td>
+        ;
+        previewTabelaCorpo.appendChild(tr);
       });
-      document.getElementById('previewTotalOrcamento').textContent = `R$ ${numeroParaPreco(total)}`;
-
-      // Prepara dados do recibo
-      document.getElementById('reciboValor').value = total.toFixed(2).replace('.', ',');
+      document.getElementById('previewTotalOrcamento').textContent = formatarMoeda(total);
 
       document.getElementById('formContainer').style.display = 'none';
       document.getElementById('previewOrcamentoContainer').style.display = 'block';
@@ -465,52 +398,53 @@
       document.getElementById('dadosRecibo').style.display = 'block';
       document.getElementById('previewReciboContainer').style.display = 'none';
 
-      // Preenche a descrição do recibo com itens do orçamento
-      const descricoes = itensOrcamento.map(item =>
-        `${item.quantidade}x ${item.descricao} (Modelo: ${item.modelo}, Cor: ${item.cor}, Placa: ${item.placa})`
-      ).join('; ');
-      document.getElementById('reciboDescricao').value = descricoes;
+      // Set valor total no campo de recibo
+      document.getElementById('valorTotal').value = document.getElementById('previewTotalOrcamento').textContent;
+      calcularRestante();
+    }
 
-      // Ajusta valor do recibo se precisar
-      const total = itensOrcamento.reduce((acc, item) => acc + (item.quantidade * item.preco), 0);
-      document.getElementById('reciboValor').value = total.toFixed(2).replace('.', ',');
-      document.getElementById('reciboData').valueAsDate = new Date();
+    function calcularRestante() {
+      const valorTotal = parseFloat(document.getElementById('valorTotal').value.replace('.', '').replace(',', '.')) || 0;
+      const valorEntrada = parseFloat(document.getElementById('valorEntrada').value) || 0;
+      const restante = valorTotal - valorEntrada;
+      document.getElementById('valorRestante').value = restante < 0 ? '0,00' : formatarMoeda(restante);
     }
 
     function gerarPreviewRecibo() {
-      const empresaNome = document.getElementById('empresaNome').value.trim();
-      const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim();
-      const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
-      const empresaTelefone = document.getElementById('empresaTelefone').value.trim();
+      const empresaNome = document.getElementById('empresaNome').value.trim() || 'Elite Car';
+      const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim() || '00.000.000/0001-00';
+      const empresaEndereco = document.getElementById('empresaEndereco').value.trim() || 'Rua das Flores, 123 - Cidade';
+      const empresaTelefone = document.getElementById('empresaTelefone').value.trim() || '(11) 99999-9999';
 
       const clienteNome = document.getElementById('clienteNome').value.trim();
       const clienteCPF = document.getElementById('clienteCPF').value.trim();
       const clienteEndereco = document.getElementById('clienteEndereco').value.trim();
       const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
 
-      const valor = document.getElementById('reciboValor').value.trim();
-      const descricao = document.getElementById('reciboDescricao').value.trim();
-      const data = document.getElementById('reciboData').value;
-
-      if (!empresaNome || !empresaCNPJ || !clienteNome || !clienteCPF || !valor || !descricao || !data) {
-        alert('Preencha todos os dados obrigatórios para gerar o recibo.');
+      if (!clienteNome) {
+        alert('Por favor, insira o nome do cliente.');
         return;
       }
 
-      // Monta o texto do recibo
-      const texto = `
-Recebemos de ${clienteNome} CPF/CNPJ: ${clienteCPF}, o valor de R$ ${valor},
-referente a: ${descricao}.
-Data: ${new Date(data).toLocaleDateString('pt-BR')}
+      const formaPagamento = document.querySelector('input[name="formaPagamento"]:checked').value;
+      const valorTotal = document.getElementById('valorTotal').value;
+      const valorEntrada = formatarMoeda(document.getElementById('valorEntrada').value || 0);
+      const valorRestante = document.getElementById('valorRestante').value;
 
-Emitido por:
-${empresaNome}
-CNPJ: ${empresaCNPJ}
-Endereço: ${empresaEndereco}
-Telefone: ${empresaTelefone}
-      `.trim();
+      document.getElementById('previewEmpresaNome').textContent = empresaNome;
+      document.getElementById('previewEmpresaCNPJ').textContent = empresaCNPJ;
+      document.getElementById('previewEmpresaEndereco').textContent = empresaEndereco;
+      document.getElementById('previewEmpresaTelefone').textContent = empresaTelefone;
 
-      document.getElementById('reciboTexto').textContent = texto;
+      document.getElementById('previewClienteNome').textContent = clienteNome;
+      document.getElementById('previewClienteCPF').textContent = clienteCPF;
+      document.getElementById('previewClienteEndereco').textContent = clienteEndereco;
+      document.getElementById('previewClienteTelefone').textContent = clienteTelefone;
+
+      document.getElementById('previewFormaPagamento').textContent = formaPagamento;
+      document.getElementById('previewValorTotal').textContent = valorTotal;
+      document.getElementById('previewValorEntrada').textContent = valorEntrada;
+      document.getElementById('previewValorRestante').textContent = valorRestante;
 
       document.getElementById('formContainer').style.display = 'none';
       document.getElementById('previewOrcamentoContainer').style.display = 'none';
@@ -521,33 +455,68 @@ Telefone: ${empresaTelefone}
     function voltarEdicaoRecibo() {
       document.getElementById('formContainer').style.display = 'none';
       document.getElementById('previewOrcamentoContainer').style.display = 'block';
-      document.getElementById('dadosRecibo').style.display = 'none';
+      document.getElementById('dadosRecibo').style.display = 'block';
       document.getElementById('previewReciboContainer').style.display = 'none';
     }
 
-    // Funções para baixar e compartilhar (implementação simplificada)
+    // Funções para baixar e compartilhar imagens
+    // Captura apenas o preview do orçamento, sem botões
+
     function baixarOrcamento() {
-      html2canvas(document.getElementById('previewOrcamentoContainer')).then(canvas => {
+      const element = document.getElementById('previewOrcamento');
+      html2canvas(element, {scale: 2}).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'orcamento-elite-car.jpg';
-        link.href = canvas.toDataURL('image/jpeg', 1.0);
-        link.click();
-      });
-    }
-    function baixarRecibo() {
-      html2canvas(document.getElementById('previewReciboContainer')).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'recibo-elite-car.jpg';
+        link.download = 'orcamento_elitecar.jpg';
         link.href = canvas.toDataURL('image/jpeg', 1.0);
         link.click();
       });
     }
     function compartilharOrcamento() {
-      alert('Funcionalidade de compartilhamento de orçamento ainda não implementada.');
+      const element = document.getElementById('previewOrcamento');
+      html2canvas(element, {scale: 2}).then(canvas => {
+        canvas.toBlob(blob => {
+          const file = new File([blob], 'orcamento_elitecar.jpg', { type: 'image/jpeg' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              title: 'Orçamento Elite Car',
+              text: 'Segue o orçamento gerado.',
+            }).catch(console.error);
+          } else {
+            alert('Seu navegador não suporta compartilhamento de arquivos.');
+          }
+        }, 'image/jpeg', 1);
+      });
+    }
+
+    function baixarRecibo() {
+      const element = document.getElementById('previewRecibo');
+      html2canvas(element, {scale: 2}).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'recibo_elitecar.jpg';
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+      });
     }
     function compartilharRecibo() {
-      alert('Funcionalidade de compartilhamento de recibo ainda não implementada.');
+      const element = document.getElementById('previewRecibo');
+      html2canvas(element, {scale: 2}).then(canvas => {
+        canvas.toBlob(blob => {
+          const file = new File([blob], 'recibo_elitecar.jpg', { type: 'image/jpeg' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              title: 'Recibo Elite Car',
+              text: 'Segue o recibo gerado.',
+            }).catch(console.error);
+          } else {
+            alert('Seu navegador não suporta compartilhamento de arquivos.');
+          }
+        }, 'image/jpeg', 1);
+      });
     }
   </script>
 </body>
 </html>
+
+
