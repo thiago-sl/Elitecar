@@ -30,10 +30,18 @@
     input, textarea {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
+      margin: 4px 0 12px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 1rem;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      color: #333;
     }
 
     .logo-car {
@@ -169,13 +177,22 @@
     <input type="text" placeholder="Endereço" id="endereco">
     <input type="text" placeholder="Telefone / WhatsApp" id="telefone">
   </div>
-   <h1>Dados do Veiculo</h1>
+
+  <h1>Dados do Veiculo</h1>
   <!-- Dados do Veículo -->
   <div class="info veiculo">
-   
-    <input type="text" placeholder="Modelo" id="modelo">
-    <input type="text" placeholder="Placa" id="placa">
-     <input type="text" placeholder="Cor" id="cor">
+    <div>
+      <label for="modelo">Modelo</label>
+      <input type="text" placeholder="Modelo" id="modelo">
+    </div>
+    <div>
+      <label for="placa">Placa</label>
+      <input type="text" placeholder="Placa" id="placa">
+    </div>
+    <div>
+      <label for="cor">Cor</label>
+      <input type="text" placeholder="Cor" id="cor">
+    </div>
   </div>
 
   <div class="datatime">
