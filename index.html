@@ -27,10 +27,6 @@
     box-shadow: 0 0 10px #ccc; 
     box-sizing: border-box;
   }
-     form, section {
-      max-width: 100%;
-      overflow-x: auto;
-    }
   label {
     display: block; 
     margin: 10px 0 5px;
@@ -44,7 +40,6 @@
     width:100%; 
     border-collapse: collapse; 
     margin-top: 20px;
-     overflow-x: auto;
   }
   th, td {
     border: 1px solid #ddd; 
@@ -164,34 +159,7 @@
   }
 
   /* Ajustes para telas pequenas (mobile) */
- @media (max-width: 600px) {
-      table, thead, tbody, tr, th, td {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      tr {
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-
-      td {
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
-      }
-
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        font-weight: bold;
-      }
-    }
+ 
 
   
   
