@@ -171,27 +171,30 @@
 
 <form id="form-orcamento">
   <h2>Orçamento</h2>
+
   <label for="cliente">Nome do Cliente:</label>
   <input type="text" id="cliente" required />
 
   <label for="veiculo">Veículo:</label>
   <input type="text" id="veiculo" required />
 
-  <table id="tabela-itens">
-    <thead>
-      <tr>
-        <th>Selecionar</th>
-        <th>Peça</th>
-        <th>Unidade</th>
-        <th>Quantidade</th>
-        <th>Valor Unitário (R$)</th>
-        <th>Total (R$)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Linhas criadas via JS -->
-    </tbody>
-  </table>
+  <div class="table-container">
+    <table id="tabela-itens">
+      <thead>
+        <tr>
+          <th>Selecionar</th>
+          <th>Peça</th>
+          <th>Unidade</th>
+          <th>Quantidade</th>
+          <th>Valor Unitário (R$)</th>
+          <th>Total (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas criadas via JS -->
+      </tbody>
+    </table>
+  </div>
 
   <label><input type="checkbox" id="pintura-fora" /> Pintura Fora</label>
   <input type="number" id="valor-pintura-fora" disabled placeholder="Valor Pintura Fora (R$)" min="0" step="0.01" />
@@ -216,18 +219,20 @@
   <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
   <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
 
-  <table id="tabela-resumo">
-    <thead>
-      <tr>
-        <th>Peça</th>
-        <th>Unidade</th>
-        <th>Quantidade</th>
-        <th>Valor Unitário (R$)</th>
-        <th>Total (R$)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="table-container">
+    <table id="tabela-resumo">
+      <thead>
+        <tr>
+          <th>Peça</th>
+          <th>Unidade</th>
+          <th>Quantidade</th>
+          <th>Valor Unitário (R$)</th>
+          <th>Total (R$)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <p><strong>Valor Total: R$ <span id="out-valor-total"></span></strong></p>
 
