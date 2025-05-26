@@ -42,6 +42,7 @@
   .logo-car img {
     max-width: 100%;
     height: auto;
+    display: block;
   }
   .header-info {
     text-align: right;
@@ -56,6 +57,11 @@
     margin: 4px 0 0 0;
     font-weight: 600;
     color: #555;
+  }
+  .header-info h3 {
+    margin: 6px 0 0 0;
+    font-weight: 700;
+    color: #27ae60;
   }
 
   /* Dados Cliente + Veículo */
@@ -146,6 +152,7 @@
     border: 1px solid #ccc;
     padding: 6px;
     text-align: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   tbody td input:focus {
     border-color: #27ae60;
@@ -197,6 +204,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+    min-width: 140px;
   }
   .controls button:hover {
     background-color: #219150;
@@ -217,10 +225,18 @@
     max-width: 100%;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(39, 174, 96, 0.25);
+    display: none;
   }
 
-  /* Responsivo */
-  @media (max-width: 650px) {
+  /* Responsivo melhorado */
+  @media (max-width: 900px) {
+    body {
+      padding: 15px 10px;
+    }
+    .orcamento {
+      padding: 20px 25px;
+      max-width: 100%;
+    }
     .header {
       flex-direction: column;
       gap: 12px;
@@ -229,14 +245,54 @@
     .header-info {
       text-align: center;
     }
+    .logo-car {
+      max-width: 140px;
+      margin: 0 auto;
+    }
     .info-grid {
       grid-template-columns: 1fr !important;
+      gap: 15px;
     }
     tbody td input {
       width: 60px;
+      font-size: 0.9rem;
     }
     .controls button {
       width: 100%;
+      font-size: 1.1rem;
+      padding: 14px 0;
+      min-width: unset;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    .total {
+      font-size: 1.3rem;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 450px) {
+    .campo label {
+      font-size: 0.9rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      font-size: 0.95rem;
+      padding: 8px 10px;
+    }
+    tbody td input {
+      width: 50px;
+    }
+    .header-info h1 {
+      font-size: 1.7rem;
+    }
+    .header-info p, .header-info h3 {
+      font-size: 1rem;
+    }
+    .total {
+      font-size: 1.2rem;
     }
   }
 </style>
@@ -298,181 +354,153 @@
   </div>
 
   <div class="table-wrapper">
-    <table id="itens">
+    <table id="itens" aria-label="Tabela de itens do orçamento">
       <thead>
         <tr>
-          <th>Qtd</th>
-          <th>Descrição</th>
-          <th>Valor Unitário</th>
-          <th>Total</th>
-          <th class="botao-coluna">Ação</th>
+          <th scope="col">Qtd</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Valor Unitário</th>
+          <th scope="col">Valor Total</th>
+          <th scope="col" class="botao-coluna">Excluir</th>
         </tr>
       </thead>
-      <tbody id="listaItens"></tbody>
+      <tbody>
+        <tr>
+          <td><input type="number" min="1" value="1" class="qtd" aria-label="Quantidade do item" /></td>
+          <td><input type="text" class="desc" aria-label="Descrição do item" placeholder="Descrição do serviço ou peça" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="unit" aria-label="Valor unitário do item" /></td>
+          <td class="total-item">R$ 0,00</td>
+          <td class="botao-coluna">
+            <button type="button" aria-label="Excluir item" class="excluir-btn">&times;</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
-    <div class="total">Valor Total: R$ <span id="valorTotal">0,00</span></div>
+  </div>
+
+  <div class="total" aria-live="polite" aria-atomic="true">
+    Total: <span id="total">R$ 0,00</span>
   </div>
 
   <div class="controls">
-    <button onclick="adicionarItem()">➕ Adicionar Item</button>
-  </div>
-
-  <div style="margin-top: 25px;">
-    <label for="obs" style="font-weight: 600; font-size: 1rem;">Observações:</label>
-    <textarea id="obs" placeholder="Digite aqui alguma observação..." rows="4"></textarea>
-  </div>
-
-  <div style="margin-top: 20px;">
-    <input type="text" id="assinatura" placeholder="Assinatura do Responsável" style="width:100%; padding:10px; border-radius:8px; border: 1.8px solid #ddd; font-size: 1rem;"/>
-  </div>
-
-  <div class="controls" id="controles" style="margin-top: 30px;">
-    <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
+    <button id="addItem" type="button">Adicionar Item</button>
+    <button id="gerar" type="button">Gerar Orçamento</button>
+    <button id="download" type="button" disabled>Baixar Imagem</button>
   </div>
 </div>
 
-<div class="controls" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px;">
-  <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
-  <button onclick="compartilharOrcamento()">Compartilhar</button>
-  <button onclick="voltarEdicao()">Editar Novamente</button>
+<div id="preview">
+  <h3>Visualização do Orçamento</h3>
+  <img id="previewImage" src="" alt="Visualização do orçamento gerado" />
 </div>
 
-<div id="preview" class="hidden">
-  <h3>Pré-visualização do Orçamento</h3>
-  <img id="previewImage" src="" alt="Prévia do orçamento gerado" />
-  <div class="controls" style="margin-top: 20px;">
-    <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
-    <button onclick="compartilharOrcamento()">Compartilhar</button>
-    <button onclick="voltarEdicao()">Editar Novamente</button>
-  </div>
-</div>
+<!-- Importando html2canvas via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+  // Atualiza data e hora
   function atualizarDataHora() {
-    const agora = new Date();
-    document.getElementById('data').innerText = agora.toLocaleDateString();
-    document.getElementById('hora').innerText = agora.toLocaleTimeString();
+    const now = new Date();
+    document.getElementById('data').textContent = now.toLocaleDateString('pt-BR');
+    document.getElementById('hora').textContent = now.toLocaleTimeString('pt-BR');
+  }
+  atualizarDataHora();
+  setInterval(atualizarDataHora, 60000);
+
+  // Formatar valor em moeda BRL
+  function formatarValor(valor) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
-  function adicionarItem() {
-    const tbody = document.getElementById('listaItens');
-    const linha = document.createElement('tr');
+  // Atualiza valores totais da tabela
+  function atualizarTabela() {
+    const tbody = document.querySelector('#itens tbody');
+    let totalGeral = 0;
+    tbody.querySelectorAll('tr').forEach(row => {
+      const qtdInput = row.querySelector('.qtd');
+      const unitInput = row.querySelector('.unit');
+      const totalItemTd = row.querySelector('.total-item');
 
-    linha.innerHTML = `
-      <td><input type="number" value="1" min="1" onchange="calcularTotal()" /></td>
-      <td><input type="text" placeholder="Descrição do serviço" /></td>
-      <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()" /></td>
-      <td>R$ 0,00</td>
-      <td class="botao-coluna"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
-    `;
+      const qtd = Number(qtdInput.value) || 0;
+      const unit = Number(unitInput.value) || 0;
+      const totalItem = qtd * unit;
 
-    tbody.appendChild(linha);
-    calcularTotal();
-  }
-
-  function calcularTotal() {
-    let total = 0;
-    const linhas = document.querySelectorAll('#listaItens tr');
-    linhas.forEach(linha => {
-      const qtd = parseFloat(linha.children[0].querySelector('input').value) || 0;
-      const valor = parseFloat(linha.children[2].querySelector('input').value) || 0;
-      const subtotal = qtd * valor;
-      linha.children[3].innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
-      total += subtotal;
+      totalItemTd.textContent = formatarValor(totalItem);
+      totalGeral += totalItem;
     });
 
-    document.getElementById('valorTotal').innerText = total.toFixed(2).replace('.', ',');
+    document.getElementById('total').textContent = formatarValor(totalGeral);
   }
 
-  async function gerarOrcamento() {
-    if (!validarCampos()) return;
+  // Adiciona nova linha na tabela
+  document.getElementById('addItem').addEventListener('click', () => {
+    const tbody = document.querySelector('#itens tbody');
+    const novaLinha = document.createElement('tr');
+    novaLinha.innerHTML = `
+      <td><input type="number" min="1" value="1" class="qtd" aria-label="Quantidade do item" /></td>
+      <td><input type="text" class="desc" aria-label="Descrição do item" placeholder="Descrição do serviço ou peça" /></td>
+      <td><input type="number" min="0" step="0.01" value="0" class="unit" aria-label="Valor unitário do item" /></td>
+      <td class="total-item">R$ 0,00</td>
+      <td class="botao-coluna">
+        <button type="button" aria-label="Excluir item" class="excluir-btn">&times;</button>
+      </td>
+    `;
+    tbody.appendChild(novaLinha);
+    adicionarEventosLinha(novaLinha);
+  });
 
-    document.getElementById('controles').classList.add('hidden');
-    document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.add('hidden'));
-    document.querySelector('.controls button[onclick="adicionarItem()"]').classList.add('hidden');
-
-    const inputsTabela = document.querySelectorAll('#listaItens input');
-    inputsTabela.forEach(input => input.setAttribute('readonly', 'readonly'));
-
-    document.querySelectorAll('input, textarea').forEach(input => input.setAttribute('readonly', 'readonly'));
-
-    atualizarDataHora();
-
-    const orcamentoDiv = document.getElementById('orcamento');
-    const preview = document.getElementById('preview');
-    preview.classList.remove('hidden');
-
-    try {
-      const canvas = await html2canvas(orcamentoDiv, { scale: 2 });
-      const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-      document.getElementById('previewImage').src = dataURL;
-    } catch (error) {
-      alert('Erro ao gerar imagem do orçamento: ' + error);
-      voltarEdicao();
-    }
+  // Adiciona eventos nas linhas para atualizar e excluir
+  function adicionarEventosLinha(row) {
+    row.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', atualizarTabela);
+    });
+    const btnExcluir = row.querySelector('.excluir-btn');
+    btnExcluir.addEventListener('click', () => {
+      row.remove();
+      atualizarTabela();
+    });
   }
 
-  function validarCampos() {
-    if (!document.getElementById('cliente').value.trim()) {
-      alert('Por favor, preencha o nome da cliente.');
-      return false;
-    }
-    if (document.querySelectorAll('#listaItens tr').length === 0) {
-      alert('Adicione pelo menos um item.');
-      return false;
-    }
-    return true;
-  }
+  // Inicializa eventos para as linhas já existentes
+  document.querySelectorAll('#itens tbody tr').forEach(adicionarEventosLinha);
 
-  function voltarEdicao() {
-    document.getElementById('preview').classList.add('hidden');
-    document.getElementById('controles').classList.remove('hidden');
-    document.querySelectorAll('.botao-coluna, .botao-coluna button').forEach(el => el.classList.remove('hidden'));
-    document.querySelector('.controls button[onclick="adicionarItem()"]').classList.remove('hidden');
+  // Atualiza a tabela no carregamento
+  atualizarTabela();
 
-    document.querySelectorAll('#listaItens input').forEach(input => input.removeAttribute('readonly'));
-    document.querySelectorAll('input, textarea').forEach(input => input.removeAttribute('readonly'));
-  }
+  let ultimaImagemDataUrl = '';
 
-  function baixarImagem() {
-    const img = document.getElementById('previewImage');
-    if (!img.src) {
-      alert('Gere a pré-visualização antes de baixar.');
+  // Gera a imagem do orçamento com html2canvas
+  document.getElementById('gerar').addEventListener('click', () => {
+    const orcamento = document.getElementById('orcamento');
+
+    html2canvas(orcamento, { scale: 2 }).then(canvas => {
+      const previewImage = document.getElementById('previewImage');
+      ultimaImagemDataUrl = canvas.toDataURL('image/png');
+      previewImage.src = ultimaImagemDataUrl;
+      previewImage.alt = 'Imagem gerada do orçamento';
+      previewImage.style.display = 'block';
+
+      // Habilitar botão de download após gerar a imagem
+      document.getElementById('download').disabled = false;
+
+      // Scroll para preview após gerar
+      previewImage.scrollIntoView({ behavior: 'smooth' });
+    }).catch(err => {
+      alert('Erro ao gerar imagem do orçamento: ' + err.message);
+    });
+  });
+
+  // Download da imagem gerada
+  document.getElementById('download').addEventListener('click', () => {
+    if (!ultimaImagemDataUrl) {
+      alert('Por favor, gere a imagem do orçamento antes de baixar.');
       return;
     }
-    const a = document.createElement('a');
-    a.href = img.src;
-    a.download = 'orcamento.jpg';
-    a.click();
-  }
-
-  async function compartilharOrcamento() {
-    const img = document.getElementById('previewImage');
-
-    try {
-      const response = await fetch(img.src);
-      const blob = await response.blob();
-      const file = new File([blob], 'orcamento.jpg', { type: 'image/jpeg' });
-
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Orçamento Elite Car',
-          text: 'Segue o orçamento detalhado para seu veículo.',
-        });
-      } else {
-        alert('Compartilhamento não suportado neste dispositivo.');
-      }
-    } catch (error) {
-      alert('Erro ao compartilhar: ' + error);
-    }
-  }
-
-  // Atualiza hora e data a cada segundo
-  setInterval(atualizarDataHora, 1000);
-  atualizarDataHora();
-  adicionarItem(); // Adiciona uma linha inicial
+    const link = document.createElement('a');
+    link.href = ultimaImagemDataUrl;
+    link.download = 'orcamento-elite-car.png';
+    link.click();
+  });
 </script>
 
 </body>
