@@ -160,21 +160,35 @@
 
   /* Ajustes para telas pequenas (mobile) */
     @media (max-width: 600px) {
-      th, td {
-        font-size: 12px;
-        padding: 4px;
+      table, thead, tbody, th, td, tr {
+        display: block;
       }
 
-      table {
-        font-size: 12px;
+      thead {
+        display: none;
       }
 
-      h1, h2 {
-        font-size: 18px;
-      }
-
-      body {
+      tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
         padding: 10px;
+      }
+
+      td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        top: 8px;
+        font-weight: bold;
+        text-align: left;
       }
     }
  
@@ -196,23 +210,29 @@
   <label for="veiculo">Veículo:</label>
   <input type="text" id="veiculo" required />
 
-  <div class="table-container">
-    <table id="tabela-itens">
-      <thead>
-        <tr>
-          <th>Selecionar</th>
-          <th>Peça</th>
-          <th>Unidade</th>
-          <th>Quantidade</th>
-          <th>Valor Unitário (R$)</th>
-          <th>Total (R$)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Linhas criadas via JS -->
-      </tbody>
-    </table>
-  </div>
+  <table id="tabela-itens">
+    <thead>
+      <tr>
+        <th>Selecionar</th>
+        <th>Peça</th>
+        <th>Unidade</th>
+        <th>Quantidade</th>
+        <th>Valor Unitário (R$)</th>
+        <th>Total (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="Selecionar"><input type="checkbox" /></td>
+        <td data-label="Peça">Parachoque</td>
+        <td data-label="Unidade">Un</td>
+        <td data-label="Quantidade">1</td>
+        <td data-label="Valor Unitário (R$)">200,00</td>
+        <td data-label="Total (R$)">200,00</td>
+      </tr>
+      <!-- outras linhas serão adicionadas dinamicamente -->
+    </tbody>
+  </table>
 
   <label><input type="checkbox" id="pintura-fora" /> Pintura Fora</label>
   <input type="number" id="valor-pintura-fora" disabled placeholder="Valor Pintura Fora (R$)" min="0" step="0.01" />
@@ -237,22 +257,28 @@
   <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
   <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
 
-  <div class="table-container">
-    <table id="tabela-resumo">
-      <thead>
-        <tr>
-          <th>Peça</th>
-          <th>Unidade</th>
-          <th>Quantidade</th>
-          <th>Valor Unitário (R$)</th>
-          <th>Total (R$)</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <table id="tabela-resumo">
+    <thead>
+      <tr>
+        <th>Peça</th>
+        <th>Unidade</th>
+        <th>Quantidade</th>
+        <th>Valor Unitário (R$)</th>
+        <th>Total (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="Peça">Porta</td>
+        <td data-label="Unidade">Un</td>
+        <td data-label="Quantidade">2</td>
+        <td data-label="Valor Unitário (R$)">150,00</td>
+        <td data-label="Total (R$)">300,00</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <p><strong>Valor Total: R$ <span id="out-valor-total"></span></strong></p>
+  <p><strong>Valor Total: R$ <span id="out-valor-total">300,00</span></strong></p>
 
   <div class="assinaturas">
     <div class="assinatura-box">Assinatura do Cliente</div>
