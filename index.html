@@ -1,197 +1,293 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Orçamento</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Orçamento Elite Car - Estilizado</title>
+<style>
+  /* Reset básico */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
 
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-      padding: 10px;
-    }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    color: #222;
+  }
 
-    .orcamento {
-      background: white;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+  .orcamento {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    padding: 30px 40px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  }
 
-    h1, h3, p {
+  /* Cabeçalho com logo + título */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #27ae60;
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+  }
+  .logo-car {
+    max-width: 180px;
+  }
+  .logo-car img {
+    max-width: 100%;
+    height: auto;
+  }
+  .header-info {
+    text-align: right;
+  }
+  .header-info h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2.2rem;
+    color: #27ae60;
+  }
+  .header-info p {
+    margin: 4px 0 0 0;
+    font-weight: 600;
+    color: #555;
+  }
+
+  /* Dados Cliente + Veículo */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+  }
+  label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 6px;
+  }
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    padding: 10px 12px;
+    border: 1.8px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 5px #27ae60aa;
+  }
+  textarea {
+    resize: vertical;
+  }
+
+  /* Data e aviso validade */
+  .datatime {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 35px;
+  }
+  .datatime strong {
+    color: #27ae60;
+  }
+
+  /* Tabela */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    font-size: 1rem;
+  }
+  thead th {
+    background-color: #27ae60;
+    color: white;
+    font-weight: 700;
+    padding: 14px 12px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+  }
+  tbody tr {
+    background-color: #e6f2ea;
+    transition: background-color 0.3s ease;
+    border-radius: 10px;
+  }
+  tbody tr:hover {
+    background-color: #d1eadb;
+  }
+  tbody td {
+    padding: 12px 14px;
+    text-align: center;
+    vertical-align: middle;
+    color: #2a5d34;
+  }
+  tbody td input {
+    width: 80px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+  }
+  tbody td input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 5px #27ae60aa;
+  }
+
+  /* Botão delete */
+  .botao-coluna button {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 4px 10px;
+    transition: background-color 0.25s ease;
+  }
+  .botao-coluna button:hover {
+    background: #c0392b;
+  }
+
+  /* Valor total */
+  .total {
+    text-align: right;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #27ae60;
+    margin-top: 10px;
+    border-top: 3px solid #27ae60;
+    padding-top: 12px;
+  }
+
+  /* Controles */
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .controls button {
+    background-color: #27ae60;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+  }
+  .controls button:hover {
+    background-color: #219150;
+  }
+
+  /* Preview */
+  #preview {
+    max-width: 900px;
+    margin: 30px auto 0 auto;
+    text-align: center;
+  }
+  #preview h3 {
+    font-weight: 700;
+    color: #27ae60;
+  }
+  #previewImage {
+    margin-top: 20px;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.25);
+  }
+
+  /* Responsivo */
+  @media (max-width: 650px) {
+    .header {
+      flex-direction: column;
+      gap: 12px;
       text-align: center;
     }
-
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 4px 0 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 4px;
-      font-size: 0.9rem;
-      color: #333;
-    }
-
-    .logo-car {
-      width: 200px;
-      margin: auto;
-      margin-bottom: 5px;
-    }
-
-    .logo {
-      height: 100px;
-      display: block;
-      margin: 0 auto 0;
-    }
-
-    .info {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .info.cliente {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .info.veiculo {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .datatime {
-      margin-top: 10px;
-      font-size: 0.95rem;
+    .header-info {
       text-align: center;
     }
-
-    .table-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 15px 0;
+    .info-grid {
+      grid-template-columns: 1fr !important;
     }
-
-    table {
-      width: 100%;
-      max-width: 800px;
-      border-collapse: collapse;
+    tbody td input {
+      width: 60px;
     }
-
-    table th, table td {
-      border: 1px solid #ccc;
-      background-color: #27ae60;
-      padding: 8px;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-
-    .total {
-      font-weight: bold;
-      text-align: right;
-      font-size: 1.1rem;
-      margin-top: 10px;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
     .controls button {
-      padding: 10px 15px;
-      background-color: #27ae60;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 600px) {
-      .info.cliente, .info.veiculo {
-        grid-template-columns: 1fr;
-      }
-
-      table th, table td {
-        font-size: 0.8rem;
-        padding: 6px;
-      }
-
-      .controls button {
-        width: 100%;
-      }
-    }
-
-    #preview {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    #previewImage {
-      max-width: 600px;
       width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      margin: 20px auto;
     }
-    .download-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
 <div class="orcamento" id="orcamento">
-  <div class="logo-car">
-    <img src="./img/imgg.avif" alt="EliteCar Logo" class="logo">
+  <div class="header">
+    <div class="logo-car">
+      <img src="./img/imgg.avif" alt="EliteCar Logo" />
+    </div>
+    <div class="header-info">
+      <h1>Elite Car</h1>
+      <p>Lanternagem e Pintura</p>
+      <h3>Orçamento</h3>
+    </div>
   </div>
-
-  <h1>Elite Car</h1>
-  <p>Lanternagem e Pintura</p>
-  <h3>Orçamento</h3>
 
   <!-- Dados do Cliente -->
-  <div class="info cliente">
-    <input type="text" placeholder="Nome da Cliente" id="cliente">
-    <input type="text" placeholder="CNPJ / CPF" id="cnpj">
-    <input type="text" placeholder="Endereço" id="endereco">
-    <input type="text" placeholder="Telefone / WhatsApp" id="telefone">
+  <div class="info-grid">
+    <div class="campo">
+      <label for="cliente">Nome da Cliente</label>
+      <input type="text" id="cliente" placeholder="Ex: Maria Silva" />
+    </div>
+    <div class="campo">
+      <label for="cnpj">CNPJ / CPF</label>
+      <input type="text" id="cnpj" placeholder="Ex: 000.000.000-00" />
+    </div>
+    <div class="campo">
+      <label for="endereco">Endereço</label>
+      <input type="text" id="endereco" placeholder="Rua, número, bairro" />
+    </div>
+    <div class="campo">
+      <label for="telefone">Telefone / WhatsApp</label>
+      <input type="text" id="telefone" placeholder="(00) 00000-0000" />
+    </div>
   </div>
 
-  <h1>Dados do Veiculo</h1>
-  <!-- Dados do Veículo -->
-  <div class="info veiculo">
-    <div>
+  <h2 style="color:#27ae60; margin-bottom:12px;">Dados do Veículo</h2>
+  <div class="info-grid">
+    <div class="campo">
       <label for="modelo">Modelo</label>
-      <input type="text" placeholder="Modelo" id="modelo">
+      <input type="text" id="modelo" placeholder="Ex: Fiat Toro" />
     </div>
-    <div>
+    <div class="campo">
       <label for="placa">Placa</label>
-      <input type="text" placeholder="Placa" id="placa">
+      <input type="text" id="placa" placeholder="Ex: ABC1D23" />
     </div>
-    <div>
+    <div class="campo">
       <label for="cor">Cor</label>
-      <input type="text" placeholder="Cor" id="cor">
+      <input type="text" id="cor" placeholder="Ex: Vermelho" />
     </div>
   </div>
 
@@ -214,46 +310,44 @@
       </thead>
       <tbody id="listaItens"></tbody>
     </table>
+    <div class="total">Valor Total: R$ <span id="valorTotal">0,00</span></div>
   </div>
 
   <div class="controls">
-    <button onclick="adicionarItem()">Adicionar Item</button>
+    <button onclick="adicionarItem()">➕ Adicionar Item</button>
   </div>
 
-  <div id="obsWrapper">
-    <p><strong>Observações:</strong></p>
-    <textarea id="obs" placeholder="Observações..." rows="4"></textarea>
+  <div style="margin-top: 25px;">
+    <label for="obs" style="font-weight: 600; font-size: 1rem;">Observações:</label>
+    <textarea id="obs" placeholder="Digite aqui alguma observação..." rows="4"></textarea>
   </div>
 
-  <div id="assinaturaWrapper">
-    <input type="text" id="assinatura" placeholder="Assinatura do Responsável">
+  <div style="margin-top: 20px;">
+    <input type="text" id="assinatura" placeholder="Assinatura do Responsável" style="width:100%; padding:10px; border-radius:8px; border: 1.8px solid #ddd; font-size: 1rem;"/>
   </div>
 
-  <div class="controls" id="controles">
+  <div class="controls" id="controles" style="margin-top: 30px;">
     <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
   </div>
 </div>
 
-<div class="controls download-buttons">
+<div class="controls" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px;">
   <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
   <button onclick="compartilharOrcamento()">Compartilhar</button>
   <button onclick="voltarEdicao()">Editar Novamente</button>
 </div>
 
-<!-- Área de visualização -->
 <div id="preview" class="hidden">
   <h3>Pré-visualização do Orçamento</h3>
-  <img id="previewImage" src="" alt="Prévia do orçamento gerado">
-  <div class="controls">
+  <img id="previewImage" src="" alt="Prévia do orçamento gerado" />
+  <div class="controls" style="margin-top: 20px;">
     <button onclick="baixarImagem()">Confirmar e Baixar JPG</button>
     <button onclick="compartilharOrcamento()">Compartilhar</button>
     <button onclick="voltarEdicao()">Editar Novamente</button>
   </div>
 </div>
 
-<!-- html2canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script>
   function atualizarDataHora() {
     const agora = new Date();
@@ -266,11 +360,11 @@
     const linha = document.createElement('tr');
 
     linha.innerHTML = `
-      <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
-      <td><input type="text" placeholder="Descrição"></td>
-      <td><input type="number" value="0" min="0" onchange="calcularTotal()"></td>
-      <td>R$ 0.00</td>
-      <td class="botao-coluna"><button onclick="this.closest('tr').remove(); calcularTotal();">🗑️</button></td>
+      <td><input type="number" value="1" min="1" onchange="calcularTotal()" /></td>
+      <td><input type="text" placeholder="Descrição do serviço" /></td>
+      <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()" /></td>
+      <td>R$ 0,00</td>
+      <td class="botao-coluna"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
     `;
 
     tbody.appendChild(linha);
@@ -284,14 +378,11 @@
       const qtd = parseFloat(linha.children[0].querySelector('input').value) || 0;
       const valor = parseFloat(linha.children[2].querySelector('input').value) || 0;
       const subtotal = qtd * valor;
-      linha.children[3].innerText = 'R$ ' + subtotal.toFixed(2);
+      linha.children[3].innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
       total += subtotal;
     });
 
-    let valorTotalEl = document.getElementById('valorTotal');
-    if (valorTotalEl) {
-      valorTotalEl.innerText = total.toFixed(2);
-    }
+    document.getElementById('valorTotal').innerText = total.toFixed(2).replace('.', ',');
   }
 
   async function gerarOrcamento() {
@@ -323,7 +414,6 @@
   }
 
   function validarCampos() {
-    // Exemplo básico: checar se o nome do cliente e ao menos um item estão preenchidos
     if (!document.getElementById('cliente').value.trim()) {
       alert('Por favor, preencha o nome da cliente.');
       return false;
@@ -369,41 +459,20 @@
         await navigator.share({
           files: [file],
           title: 'Orçamento Elite Car',
-          text: 'Confira o orçamento gerado pela Elite Car.',
-        });
-      } else if (navigator.share) {
-        await navigator.share({
-          title: 'Orçamento Elite Car',
-          text: 'Confira o orçamento gerado pela Elite Car.',
-          url: img.src,
+          text: 'Segue o orçamento detalhado para seu veículo.',
         });
       } else {
-        alert('Este navegador não suporta compartilhamento.');
+        alert('Compartilhamento não suportado neste dispositivo.');
       }
-    } catch (err) {
-      alert('Erro ao compartilhar: ' + err.message);
+    } catch (error) {
+      alert('Erro ao compartilhar: ' + error);
     }
   }
 
-  // Atualiza data e hora ao carregar
+  // Atualiza hora e data a cada segundo
+  setInterval(atualizarDataHora, 1000);
   atualizarDataHora();
-
-  // Adiciona um item inicial para facilitar
-  adicionarItem();
-
-  // Esconde botão compartilhar se não suportar
-  document.addEventListener("DOMContentLoaded", () => {
-    const compartilharBtn = document.querySelector('button[onclick="compartilharOrcamento()"]');
-
-    // Teste rápido para evitar exibir botão onde não funciona
-    if (
-      !navigator.share ||
-      (!navigator.canShare?.({ files: [new File([""], "teste.jpg", { type: "image/jpeg" })] }) &&
-      !navigator.canShare?.({ url: "https://exemplo.com" }))
-    ) {
-      compartilharBtn.style.display = 'none';
-    }
-  });
+  adicionarItem(); // Adiciona uma linha inicial
 </script>
 
 </body>
