@@ -159,13 +159,22 @@
   }
 
   /* Ajustes para telas pequenas (mobile) */
-  @media (max-width: 600px) {
-      .table-wrapper {
-        overflow-x: auto;
+    @media (max-width: 600px) {
+      th, td {
+        font-size: 12px;
+        padding: 4px;
       }
 
       table {
-        min-width: 600px;
+        font-size: 12px;
+      }
+
+      h1, h2 {
+        font-size: 18px;
+      }
+
+      body {
+        padding: 10px;
       }
     }
  
