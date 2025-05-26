@@ -42,7 +42,6 @@
   .logo-car img {
     max-width: 100%;
     height: auto;
-    display: block;
   }
   .header-info {
     text-align: right;
@@ -57,11 +56,6 @@
     margin: 4px 0 0 0;
     font-weight: 600;
     color: #555;
-  }
-  .header-info h3 {
-    margin: 6px 0 0 0;
-    font-weight: 700;
-    color: #27ae60;
   }
 
   /* Dados Cliente + Veículo */
@@ -152,7 +146,6 @@
     border: 1px solid #ccc;
     padding: 6px;
     text-align: center;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   tbody td input:focus {
     border-color: #27ae60;
@@ -204,7 +197,6 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-    min-width: 140px;
   }
   .controls button:hover {
     background-color: #219150;
@@ -216,6 +208,9 @@
     margin: 30px auto 0 auto;
     text-align: center;
   }
+  #preview.hidden {
+    display: none;
+  }
   #preview h3 {
     font-weight: 700;
     color: #27ae60;
@@ -225,18 +220,10 @@
     max-width: 100%;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(39, 174, 96, 0.25);
-    display: none;
   }
 
-  /* Responsivo melhorado */
-  @media (max-width: 900px) {
-    body {
-      padding: 15px 10px;
-    }
-    .orcamento {
-      padding: 20px 25px;
-      max-width: 100%;
-    }
+  /* Responsivo */
+  @media (max-width: 650px) {
     .header {
       flex-direction: column;
       gap: 12px;
@@ -245,54 +232,14 @@
     .header-info {
       text-align: center;
     }
-    .logo-car {
-      max-width: 140px;
-      margin: 0 auto;
-    }
     .info-grid {
       grid-template-columns: 1fr !important;
-      gap: 15px;
     }
     tbody td input {
       width: 60px;
-      font-size: 0.9rem;
     }
     .controls button {
       width: 100%;
-      font-size: 1.1rem;
-      padding: 14px 0;
-      min-width: unset;
-    }
-    .table-wrapper {
-      overflow-x: auto;
-    }
-    .total {
-      font-size: 1.3rem;
-      text-align: center;
-    }
-  }
-
-  @media (max-width: 450px) {
-    .campo label {
-      font-size: 0.9rem;
-    }
-    input[type="text"],
-    input[type="number"],
-    textarea {
-      font-size: 0.95rem;
-      padding: 8px 10px;
-    }
-    tbody td input {
-      width: 50px;
-    }
-    .header-info h1 {
-      font-size: 1.7rem;
-    }
-    .header-info p, .header-info h3 {
-      font-size: 1rem;
-    }
-    .total {
-      font-size: 1.2rem;
     }
   }
 </style>
@@ -354,153 +301,152 @@
   </div>
 
   <div class="table-wrapper">
-    <table id="itens" aria-label="Tabela de itens do orçamento">
+    <table id="itens">
       <thead>
         <tr>
-          <th scope="col">Qtd</th>
-          <th scope="col">Descrição</th>
-          <th scope="col">Valor Unitário</th>
-          <th scope="col">Valor Total</th>
-          <th scope="col" class="botao-coluna">Excluir</th>
+          <th>Qtd</th>
+          <th>Descrição</th>
+          <th>Valor Unitário</th>
+          <th>Total</th>
+          <th class="botao-coluna">Ação</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><input type="number" min="1" value="1" class="qtd" aria-label="Quantidade do item" /></td>
-          <td><input type="text" class="desc" aria-label="Descrição do item" placeholder="Descrição do serviço ou peça" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="unit" aria-label="Valor unitário do item" /></td>
-          <td class="total-item">R$ 0,00</td>
-          <td class="botao-coluna">
-            <button type="button" aria-label="Excluir item" class="excluir-btn">&times;</button>
-          </td>
-        </tr>
-      </tbody>
+      <tbody id="listaItens"></tbody>
     </table>
+    <div class="total">Valor Total: R$ <span id="valorTotal">0,00</span></div>
   </div>
 
-  <div class="total" aria-live="polite" aria-atomic="true">
-    Total: <span id="total">R$ 0,00</span>
+  <div class="controls" id="controles">
+    <button onclick="adicionarItem()">➕ Adicionar Item</button>
+    <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
   </div>
 
-  <div class="controls">
-    <button id="addItem" type="button">Adicionar Item</button>
-    <button id="gerar" type="button">Gerar Orçamento</button>
-    <button id="download" type="button" disabled>Baixar Imagem</button>
+  <div style="margin-top: 25px;">
+    <label for="obs" style="font-weight: 600; font-size: 1rem;">Observações:</label>
+    <textarea id="obs" placeholder="Digite aqui alguma observação..." rows="4"></textarea>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <input type="text" id="assinatura" placeholder="Assinatura do Responsável" style="width:100%; padding:10px; border-radius:8px; border: 1.8px solid #ddd; font-size: 1rem;"/>
   </div>
 </div>
 
-<div id="preview">
-  <h3>Visualização do Orçamento</h3>
-  <img id="previewImage" src="" alt="Visualização do orçamento gerado" />
+<!-- Controles após geração -->
+<div class="controls" id="acoesPreview" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px; display: none;">
+  <button onclick="baixarPDF()">Confirmar e Baixar PDF</button>
+  <button onclick="compartilharOrcamento()">Compartilhar</button>
+  <button onclick="voltarEdicao()">Editar Novamente</button>
 </div>
 
-<!-- Importando html2canvas via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- Preview -->
+<div id="preview" class="hidden" style="max-width: 900px; margin: 30px auto 0 auto; text-align: center;">
+  <h3>Pré-visualização do Orçamento</h3>
+  <img id="previewImage" src="" alt="Prévia do orçamento gerado" />
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  // Atualiza data e hora
+  const { jsPDF } = window.jspdf;
+
   function atualizarDataHora() {
-    const now = new Date();
-    document.getElementById('data').textContent = now.toLocaleDateString('pt-BR');
-    document.getElementById('hora').textContent = now.toLocaleTimeString('pt-BR');
-  }
-  atualizarDataHora();
-  setInterval(atualizarDataHora, 60000);
-
-  // Formatar valor em moeda BRL
-  function formatarValor(valor) {
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const agora = new Date();
+    document.getElementById('data').innerText = agora.toLocaleDateString();
+    document.getElementById('hora').innerText = agora.toLocaleTimeString();
   }
 
-  // Atualiza valores totais da tabela
-  function atualizarTabela() {
-    const tbody = document.querySelector('#itens tbody');
-    let totalGeral = 0;
-    tbody.querySelectorAll('tr').forEach(row => {
-      const qtdInput = row.querySelector('.qtd');
-      const unitInput = row.querySelector('.unit');
-      const totalItemTd = row.querySelector('.total-item');
+  function adicionarItem() {
+    const tbody = document.getElementById('listaItens');
+    const linha = document.createElement('tr');
 
-      const qtd = Number(qtdInput.value) || 0;
-      const unit = Number(unitInput.value) || 0;
-      const totalItem = qtd * unit;
-
-      totalItemTd.textContent = formatarValor(totalItem);
-      totalGeral += totalItem;
-    });
-
-    document.getElementById('total').textContent = formatarValor(totalGeral);
-  }
-
-  // Adiciona nova linha na tabela
-  document.getElementById('addItem').addEventListener('click', () => {
-    const tbody = document.querySelector('#itens tbody');
-    const novaLinha = document.createElement('tr');
-    novaLinha.innerHTML = `
-      <td><input type="number" min="1" value="1" class="qtd" aria-label="Quantidade do item" /></td>
-      <td><input type="text" class="desc" aria-label="Descrição do item" placeholder="Descrição do serviço ou peça" /></td>
-      <td><input type="number" min="0" step="0.01" value="0" class="unit" aria-label="Valor unitário do item" /></td>
-      <td class="total-item">R$ 0,00</td>
-      <td class="botao-coluna">
-        <button type="button" aria-label="Excluir item" class="excluir-btn">&times;</button>
-      </td>
+    linha.innerHTML = `
+      <td><input type="number" value="1" min="1" onchange="calcularTotal()" /></td>
+      <td><input type="text" placeholder="Descrição do serviço" /></td>
+      <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()" /></td>
+      <td>R$ 0,00</td>
+      <td class="botao-coluna"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
     `;
-    tbody.appendChild(novaLinha);
-    adicionarEventosLinha(novaLinha);
-  });
 
-  // Adiciona eventos nas linhas para atualizar e excluir
-  function adicionarEventosLinha(row) {
-    row.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', atualizarTabela);
+    tbody.appendChild(linha);
+    calcularTotal();
+  }
+
+  function calcularTotal() {
+    let total = 0;
+    const linhas = document.querySelectorAll('#listaItens tr');
+    linhas.forEach(linha => {
+      const qtd = parseFloat(linha.children[0].querySelector('input').value) || 0;
+      const valor = parseFloat(linha.children[2].querySelector('input').value) || 0;
+      const subtotal = qtd * valor;
+      linha.children[3].innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
+      total += subtotal;
     });
-    const btnExcluir = row.querySelector('.excluir-btn');
-    btnExcluir.addEventListener('click', () => {
-      row.remove();
-      atualizarTabela();
+
+    document.getElementById('valorTotal').innerText = total.toFixed(2).replace('.', ',');
+  }
+
+  function gerarOrcamento() {
+    calcularTotal();
+
+    // Esconde controles de edição
+    document.getElementById('controles').style.display = 'none';
+
+    // Captura imagem do orçamento
+    const orcamentoEl = document.getElementById('orcamento');
+    html2canvas(orcamentoEl, { scale: 2 }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+
+      // Mostra preview
+      const preview = document.getElementById('preview');
+      const previewImage = document.getElementById('previewImage');
+      previewImage.src = imgData;
+      preview.classList.remove('hidden');
+
+      // Mostra controles após gerar
+      document.getElementById('acoesPreview').style.display = 'flex';
     });
   }
 
-  // Inicializa eventos para as linhas já existentes
-  document.querySelectorAll('#itens tbody tr').forEach(adicionarEventosLinha);
+  function baixarPDF() {
+    const orcamentoEl = document.getElementById('orcamento');
+    html2canvas(orcamentoEl, { scale: 3 }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4'
+      });
 
-  // Atualiza a tabela no carregamento
-  atualizarTabela();
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
-  let ultimaImagemDataUrl = '';
+      // Ajustar a imagem para caber no pdf mantendo proporção
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pdfWidth * 0.95;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-  // Gera a imagem do orçamento com html2canvas
-  document.getElementById('gerar').addEventListener('click', () => {
-    const orcamento = document.getElementById('orcamento');
-
-    html2canvas(orcamento, { scale: 2 }).then(canvas => {
-      const previewImage = document.getElementById('previewImage');
-      ultimaImagemDataUrl = canvas.toDataURL('image/png');
-      previewImage.src = ultimaImagemDataUrl;
-      previewImage.alt = 'Imagem gerada do orçamento';
-      previewImage.style.display = 'block';
-
-      // Habilitar botão de download após gerar a imagem
-      document.getElementById('download').disabled = false;
-
-      // Scroll para preview após gerar
-      previewImage.scrollIntoView({ behavior: 'smooth' });
-    }).catch(err => {
-      alert('Erro ao gerar imagem do orçamento: ' + err.message);
+      pdf.addImage(imgData, 'PNG', (pdfWidth - imgWidth) / 2, 20, imgWidth, imgHeight);
+      pdf.save('Orcamento_EliteCar.pdf');
     });
-  });
+  }
 
-  // Download da imagem gerada
-  document.getElementById('download').addEventListener('click', () => {
-    if (!ultimaImagemDataUrl) {
-      alert('Por favor, gere a imagem do orçamento antes de baixar.');
-      return;
-    }
-    const link = document.createElement('a');
-    link.href = ultimaImagemDataUrl;
-    link.download = 'orcamento-elite-car.png';
-    link.click();
-  });
+  function compartilharOrcamento() {
+    alert('Função de compartilhamento ainda não implementada.');
+  }
+
+  function voltarEdicao() {
+    // Esconde preview e controles finais
+    document.getElementById('preview').classList.add('hidden');
+    document.getElementById('acoesPreview').style.display = 'none';
+
+    // Mostra controles de edição
+    document.getElementById('controles').style.display = 'flex';
+  }
+
+  // Inicializa data/hora e adiciona um item para começar
+  atualizarDataHora();
+  adicionarItem();
+
 </script>
 
 </body>
