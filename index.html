@@ -134,7 +134,7 @@
     }
   }
   
- table {
+ #tabela-resumo-wrapper {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; /* rolagem suave no iOS */
@@ -150,7 +150,7 @@
   }
 
   table th,
-  table td {
+  #tabela-resumo td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: left;
@@ -159,13 +159,13 @@
   }
 
   /* Ajustes para telas pequenas (mobile) */
-  @media (max-width: 768px) {
+  @media (max-width: 468px) {
     table {
       border: none;
     }
 
    table {
-    width:100%; 
+    width:50%; 
     border-collapse: collapse; 
     margin-top: 20px;
   }
