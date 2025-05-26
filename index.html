@@ -159,38 +159,48 @@
   }
 
   /* Ajustes para telas pequenas (mobile) */
-    @media (max-width: 600px) {
+     @media (max-width: 600px) {
       table, thead, tbody, th, td, tr {
         display: block;
       }
 
-      thead {
-        display: none;
+      thead tr {
+        display: none; /* Oculta o cabeçalho */
       }
 
       tr {
         margin-bottom: 15px;
         border: 1px solid #ccc;
         padding: 10px;
+        border-radius: 8px;
+        background: #f9f9f9;
       }
 
       td {
-        text-align: right;
+        /* Cada célula vira linha separada */
         padding-left: 50%;
         position: relative;
+        text-align: left;
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #ddd;
+        font-size: 14px;
       }
 
+      td:last-child {
+        border-bottom: 0;
+      }
+
+      /* Adiciona o título da coluna antes do conteúdo da célula */
       td::before {
         content: attr(data-label);
         position: absolute;
-        left: 10px;
+        left: 15px;
         top: 8px;
         font-weight: bold;
-        text-align: left;
+        white-space: nowrap;
       }
     }
+
  
 
   
@@ -210,7 +220,7 @@
   <label for="veiculo">Veículo:</label>
   <input type="text" id="veiculo" required />
 
-  <table id="tabela-itens">
+  <table id="tabela-itens" role="table">
     <thead>
       <tr>
         <th>Selecionar</th>
@@ -230,7 +240,7 @@
         <td data-label="Valor Unitário (R$)">200,00</td>
         <td data-label="Total (R$)">200,00</td>
       </tr>
-      <!-- outras linhas serão adicionadas dinamicamente -->
+      <!-- Linhas extras via JS -->
     </tbody>
   </table>
 
@@ -257,7 +267,7 @@
   <p><strong>Cliente:</strong> <span id="out-cliente"></span></p>
   <p><strong>Veículo:</strong> <span id="out-veiculo"></span></p>
 
-  <table id="tabela-resumo">
+  <table id="tabela-resumo" role="table">
     <thead>
       <tr>
         <th>Peça</th>
@@ -290,6 +300,7 @@
     <button id="btn-compartilhar-orcamento" disabled>Compartilhar Orçamento</button>
   </div>
 </section>
+
 
 <form id="form-recibo" style="margin-top: 40px;">
   <h2>Recibo</h2>
@@ -327,8 +338,8 @@
   <h2>Recibo</h2>
 
   <p><strong>Elite Car Serviços Automotivos</strong></p>
-  <p>Endereço: Rua Exemplo, 123 - Cidade, Estado</p>
-  <p>Telefone: (00) 0000-0000 | Email: contato@elitecar.com.br</p>
+  <p>Qr3 conjunto N Casa 6</p>
+  <p>Telefone: (61) 981637286 </p>
   <hr />
 
   <p><strong>Data:</strong> <span id="recibo-data"></span></p>
