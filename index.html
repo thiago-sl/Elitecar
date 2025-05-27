@@ -22,7 +22,6 @@
     max-width: 900px;
     margin: 0 auto;
     background: #fff;
-    border-radius: 14px;
     padding: 30px 40px;
     box-shadow: 0 12px 24px rgba(0,0,0,0.12);
   }
@@ -32,7 +31,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 2px solid #27ae60;
     padding-bottom: 12px;
     margin-bottom: 25px;
   }
@@ -79,8 +77,6 @@
   input[type="number"],
   textarea {
     padding: 10px 12px;
-    border: 1.8px solid #ddd;
-    border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
   }
@@ -88,7 +84,6 @@
   input[type="number"]:focus,
   textarea:focus {
     outline: none;
-    border-color: #27ae60;
     box-shadow: 0 0 5px #27ae60aa;
   }
   textarea {
@@ -112,23 +107,23 @@
     margin-bottom: 20px;
   }
   table {
-    width: 100%;
+    width: 90%;
     border-collapse: separate;
     border-spacing: 0 10px;
     font-size: 1rem;
+    margin: auto;
   }
   thead th {
     background-color: #27ae60;
     color: white;
     font-weight: 700;
     padding: 14px 12px;
-    border-radius: 8px 8px 0 0;
     text-align: center;
   }
   tbody tr {
     background-color: #e6f2ea;
     transition: background-color 0.3s ease;
-    border-radius: 10px;
+  
   }
   tbody tr:hover {
     background-color: #d1eadb;
@@ -142,13 +137,11 @@
   tbody td input {
     width: 80px;
     font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
     padding: 6px;
     text-align: center;
   }
   tbody td input:focus {
-    border-color: #27ae60;
+  
     box-shadow: 0 0 5px #27ae60aa;
   }
 
@@ -175,7 +168,6 @@
     font-size: 1.5rem;
     color: #27ae60;
     margin-top: 10px;
-    border-top: 3px solid #27ae60;
     padding-top: 12px;
   }
 
@@ -192,7 +184,6 @@
     font-weight: 700;
     font-size: 1.1rem;
     border: none;
-    border-radius: 8px;
     padding: 12px 28px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -218,7 +209,6 @@
   #previewImage {
     margin-top: 20px;
     max-width: 100%;
-    border-radius: 12px;
     box-shadow: 0 0 20px rgba(39, 174, 96, 0.25);
   }
 
@@ -274,11 +264,7 @@
       <label for="cliente">Nome da Cliente</label>
       <input type="text" id="cliente" placeholder="Ex: Maria Silva" />
     </div>
-    <div class="campo">
-      <label for="cnpj">CNPJ / CPF</label>
-      <input type="text" id="cnpj" placeholder="Ex: 000.000.000-00" />
-    </div>
-    <div class="campo">
+  <div class="campo">
       <label for="endereco">Endereço</label>
       <input type="text" id="endereco" placeholder="Rua, número, bairro" />
     </div>
@@ -361,131 +347,183 @@
 
   function atualizarDataHora() {
     const agora = new Date();
-    document.getElementById('data').innerText = agora.toLocaleDateString();
-    document.getElementById('hora').innerText = agora.toLocaleTimeString();
+    document.getElementById('data').innerText = agora.toLocaleDateString('pt-BR');
+    document.getElementById('hora').innerText = agora.toLocaleTimeString('pt-BR');
+  }
+  atualizarDataHora();
+
+  // Função para formatar valores monetários
+  function formatarDinheiro(valor) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '').trim();
   }
 
+  // Adicionar linha nova na tabela
   function adicionarItem() {
     const tbody = document.getElementById('listaItens');
-    const linha = document.createElement('tr');
+    const tr = document.createElement('tr');
 
-    linha.innerHTML = `
-      <td><input type="number" value="1" min="1" onchange="calcularTotal()" /></td>
-      <td><input type="text" placeholder="Descrição do serviço" /></td>
-      <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()" /></td>
-      <td>R$ 0,00</td>
-      <td class="botao-coluna no-print"><button title="Remover item" onclick="this.closest('tr').remove(); calcularTotal();">✖</button></td>
+    tr.innerHTML = `
+      <td><input type="number" min="1" value="1" onchange="atualizarLinha(this)" /></td>
+      <td><input type="text" placeholder="Descrição do item" /></td>
+      <td><input type="number" min="0" step="0.01" value="0.00" onchange="atualizarLinha(this)" /></td>
+      <td class="total-linha">R$ 0,00</td>
+      <td class="botao-coluna no-print"><button onclick="removerItem(this)">❌</button></td>
     `;
-
-    tbody.appendChild(linha);
-    calcularTotal();
+    tbody.appendChild(tr);
+    atualizarTotal();
   }
 
-  function calcularTotal() {
-    let total = 0;
+  function removerItem(botao) {
+    botao.closest('tr').remove();
+    atualizarTotal();
+  }
+
+  // Atualiza a linha e total
+  function atualizarLinha(input) {
+    const tr = input.closest('tr');
+    const qtd = Number(tr.querySelector('td:nth-child(1) input').value) || 0;
+    const valorUnit = Number(tr.querySelector('td:nth-child(3) input').value) || 0;
+    const total = qtd * valorUnit;
+    tr.querySelector('.total-linha').innerText = 'R$ ' + formatarDinheiro(total);
+    atualizarTotal();
+  }
+
+  function atualizarTotal() {
     const linhas = document.querySelectorAll('#listaItens tr');
-    linhas.forEach(linha => {
-      const qtd = parseFloat(linha.children[0].querySelector('input').value) || 0;
-      const valor = parseFloat(linha.children[2].querySelector('input').value) || 0;
-      const subtotal = qtd * valor;
-      linha.children[3].innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
-      total += subtotal;
+    let soma = 0;
+    linhas.forEach(tr => {
+      const tdTotal = tr.querySelector('.total-linha').innerText.replace('R$', '').replace('.', '').replace(',', '.').trim();
+      const val = parseFloat(tdTotal.replace(',', '.')) || 0;
+      soma += val;
     });
-
-    document.getElementById('valorTotal').innerText = total.toFixed(2).replace('.', ',');
+    document.getElementById('valorTotal').innerText = formatarDinheiro(soma);
   }
 
-  function gerarOrcamento() {
-    calcularTotal();
+  // Gerar pré-visualização em imagem do orçamento
+  async function gerarOrcamento() {
+    const orcamentoDiv = document.getElementById('orcamento');
 
-    // Esconde controles de edição
+    // Verifica se tem pelo menos 1 item com descrição preenchida
+    const items = document.querySelectorAll('#listaItens tr');
+    if(items.length === 0) {
+      alert('Adicione ao menos um item para gerar o orçamento.');
+      return;
+    }
+    for(let tr of items) {
+      const desc = tr.querySelector('td:nth-child(2) input').value.trim();
+      if(desc === '') {
+        alert('Preencha a descrição de todos os itens.');
+        return;
+      }
+    }
+
+    // Atualizar a data e hora na geração
+    atualizarDataHora();
+
+    // Ocultar controles para print
     document.getElementById('controles').style.display = 'none';
 
-    // Captura imagem do orçamento
-    const orcamentoEl = document.getElementById('orcamento');
-    html2canvas(orcamentoEl, { scale: 2 }).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
+    // Captura o orçamento como imagem
+    const canvas = await html2canvas(orcamentoDiv, { scale: 2, useCORS: true });
+    const imgData = canvas.toDataURL('image/png');
 
-      // Mostra preview
-      const preview = document.getElementById('preview');
-      const previewImage = document.getElementById('previewImage');
-      previewImage.src = imgData;
-      preview.classList.remove('hidden');
+    // Mostrar preview
+    const preview = document.getElementById('preview');
+    document.getElementById('previewImage').src = imgData;
+    preview.classList.remove('hidden');
 
-      // Mostra controles após gerar
-      document.getElementById('acoesPreview').style.display = 'flex';
-    });
+    // Mostrar botões para download e compartilhamento
+    document.getElementById('acoesPreview').style.display = 'flex';
+
+    // Esconder formulário para visualização limpa
+    orcamentoDiv.style.display = 'none';
   }
 
+  // Baixar PDF com a imagem do orçamento
+  async function baixarPDF() {
+    const previewImg = document.getElementById('previewImage');
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Tamanho da imagem no PDF, mantendo proporção A4 (210x297 mm)
+    const larguraPDF = 190;
+    const proporcao = previewImg.naturalHeight / previewImg.naturalWidth;
+    const alturaPDF = larguraPDF * proporcao;
+
+    pdf.addImage(previewImg.src, 'PNG', 10, 10, larguraPDF, alturaPDF);
+    pdf.save('orcamento-elitecar.pdf');
+  }
+
+  // Compartilhar via WhatsApp com texto do orçamento (sem link para PDF)
+  function compartilharWhatsApp() {
+    // Recolher os dados preenchidos
+    const cliente = document.getElementById('cliente').value.trim();
+    const endereco = document.getElementById('endereco').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+
+    const modelo = document.getElementById('modelo').value.trim();
+    const placa = document.getElementById('placa').value.trim();
+    const cor = document.getElementById('cor').value.trim();
+
+    const data = document.getElementById('data').innerText;
+    const hora = document.getElementById('hora').innerText;
+    const obs = document.getElementById('obs').value.trim();
+    const assinatura = document.getElementById('assinatura').value.trim();
+
+    // Montar texto do orçamento
+    let mensagem = `*Orçamento Elite Car*\n\n`;
+    mensagem += `*Cliente:* ${cliente}\n`;
+    mensagem += `*Endereço:* ${endereco}\n`;
+    mensagem += `*Telefone:* ${telefone}\n\n`;
+
+    mensagem += `*Veículo:*\nModelo: ${modelo}\nPlaca: ${placa}\nCor: ${cor}\n\n`;
+
+    mensagem += `*Data:* ${data}  *Hora:* ${hora}\n\n`;
+
+    mensagem += `*Itens:*\n`;
+    const linhas = document.querySelectorAll('#listaItens tr');
+    linhas.forEach(tr => {
+      const qtd = tr.querySelector('td:nth-child(1) input').value || '0';
+      const desc = tr.querySelector('td:nth-child(2) input').value || '';
+      const valUnit = tr.querySelector('td:nth-child(3) input').value || '0';
+      const total = tr.querySelector('.total-linha').innerText.replace('R$', '').trim();
+      mensagem += `- ${qtd} x ${desc} (R$ ${parseFloat(valUnit).toFixed(2)}) = R$ ${total}\n`;
+    });
+
+    const valorTotal = document.getElementById('valorTotal').innerText;
+    mensagem += `\n*Valor Total:* R$ ${valorTotal}\n`;
+
+    if(obs) {
+      mensagem += `\n*Observações:* ${obs}\n`;
+    }
+    if(assinatura) {
+      mensagem += `\n*Assinatura:* ${assinatura}\n`;
+    }
+    mensagem += `\n*Este orçamento é válido por 7 dias.*`;
+
+    // Codifica para URL
+    const mensagemCodificada = encodeURIComponent(mensagem);
+
+    // Link para WhatsApp com mensagem, sem número fixo (usuário escolhe)
+    const urlWhats = `https://wa.me/?text=${mensagemCodificada}`;
+
+    window.open(urlWhats, '_blank');
+  }
+
+  // Voltar para edição
   function voltarEdicao() {
-    // Esconde preview e controles de preview
     document.getElementById('preview').classList.add('hidden');
     document.getElementById('acoesPreview').style.display = 'none';
-
-    // Mostra controles de edição
+    document.getElementById('orcamento').style.display = 'block';
     document.getElementById('controles').style.display = 'flex';
   }
 
-  async function baixarPDF() {
-    const orcamentoEl = document.getElementById('orcamento');
-
-    // Gera canvas com escala para evitar quebra de página e garantir uma página única
-    const canvas = await html2canvas(orcamentoEl, { scale: 3 });
-
-    const imgData = canvas.toDataURL('image/png');
-
-    // Dimensões A4 em pt (210mm x 297mm) - converter para px dependendo da resolução
-    const pdf = new jsPDF({
-      unit: 'pt',
-      format: 'a4',
-      compress: true
-    });
-
-    // Ajustar imagem para caber na página inteira (sem quebra)
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    // Ajusta a escala da imagem para caber em uma página A4, mantendo proporção
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgWidth = imgProps.width;
-    const imgHeight = imgProps.height;
-
-    let widthRatio = pageWidth / imgWidth;
-    let heightRatio = pageHeight / imgHeight;
-    let scale = Math.min(widthRatio, heightRatio);
-
-    const imgRenderWidth = imgWidth * scale;
-    const imgRenderHeight = imgHeight * scale;
-
-    // Adiciona a imagem ao PDF, centralizada verticalmente e horizontalmente
-    const x = (pageWidth - imgRenderWidth) / 2;
-    const y = (pageHeight - imgRenderHeight) / 2;
-
-    pdf.addImage(imgData, 'PNG', x, y, imgRenderWidth, imgRenderHeight);
-
-    pdf.save('Orcamento_EliteCar.pdf');
-  }
-
-  function compartilharWhatsApp() {
-    // Mensagem base
-    const nome = document.getElementById('cliente').value || 'Cliente';
-    const modelo = document.getElementById('modelo').value || 'veículo';
-    const valorTotal = document.getElementById('valorTotal').innerText || '0,00';
-
-    // Texto para compartilhar no WhatsApp
-    const mensagem = encodeURIComponent(
-      `Olá ${nome}! Aqui está o orçamento para o seu ${modelo}.\nValor Total: R$ ${valorTotal}\n\nEntre em contato conosco para mais detalhes!`
-    );
-
-    // Link do WhatsApp web para abrir conversa
-    const urlWhatsApp = `https://api.whatsapp.com/send?text=${mensagem}`;
-
-    window.open(urlWhatsApp, '_blank');
-  }
-
-  // Atualiza data e hora ao carregar a página
+  // Inicializar com um item vazio para facilitar
   window.onload = () => {
-    atualizarDataHora();
     adicionarItem();
   };
 </script>
