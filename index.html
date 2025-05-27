@@ -84,15 +84,27 @@
       border: 1px solid #ddd;
       padding: 8px 10px;
       text-align: left;
+      vertical-align: middle;
     }
+
+    /* Ajustar larguras específicas no orçamento */
+    #orcamento table th:nth-child(1) { width: 50%; } /* Item maior */
+    #orcamento table th:nth-child(2) { width: 15%; } /* Qtd menor */
+    #orcamento table th:nth-child(3),
+    #orcamento table th:nth-child(4) { width: 17.5%; }
 
     th {
       background: #e3f2fd;
     }
 
-    th .abbr { display: none; }
-    th .full { display: inline; }
+    /* Abreviação da palavra Quantidade para Qtd no orçamento */
+    #orcamento table th:nth-child(2) .full { display: none; }
+    #orcamento table th:nth-child(2) .abbr { display: inline; }
+    #orcamento table th:nth-child(1) .abbr { display: none; }
+    #orcamento table th:nth-child(1) .full { display: inline; }
 
+    /* Para recibo, mantemos Quantidade normal (se existir) */
+    
     .signatures {
       display: flex;
       justify-content: space-between;
@@ -153,8 +165,19 @@
       .signature-box { min-width: 100%; margin-bottom: 10px; }
       .buttons { flex-direction: column; gap: 15px; }
       button { min-width: 100%; flex-grow: 0; }
-      th .full { display: none; }
-      th .abbr { display: inline; }
+
+      /* Ajuste para colunas da tabela no orçamento no celular */
+      #orcamento table th:nth-child(1) { width: 60%; }
+      #orcamento table th:nth-child(2) { width: 20%; }
+      #orcamento table th:nth-child(3),
+      #orcamento table th:nth-child(4) { width: 10%; }
+
+      /* Mostrar abreviações */
+      #orcamento table th:nth-child(2) .full { display: none; }
+      #orcamento table th:nth-child(2) .abbr { display: inline; }
+
+      #orcamento table th:nth-child(1) .abbr { display: none; }
+      #orcamento table th:nth-child(1) .full { display: inline; }
     }
 
     .logo {
@@ -214,8 +237,8 @@
     <table id="itensTabela">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Quantidade</th>
+          <th><span class="full">Item</span><span class="abbr">Item</span></th>
+          <th><span class="full">Quantidade</span><span class="abbr">Qtd</span></th>
           <th>Preço Unitário</th>
           <th>Total</th>
         </tr>
@@ -242,47 +265,28 @@
     </div>
 
     <div class="buttons">
-      <button id="baixarPdfOrcamento" class="no-print">Baixar PDF</button>
-      <button id="imprimirOrcamento" class="no-print">Imprimir</button>
-      <button id="compartilharOrcamento" class="no-print">Compartilhar</button>
+      <button id="baixarPdfOrcamento" class="no-print">Baixar PDF do Orçamento</button>
     </div>
   </section>
 
   <!-- RECIBO -->
-  <section id="recibo">
-    <img src="./img/imgg.avif" alt="Logo da Empresa" class="logo" />
-    <h1>Elite Car</h1>
+  <section id="recibo" style="margin-top: 40px;">
     <h2>Recibo</h2>
 
-    <label for="empresaNomeRecibo">Nome da empresa</label>
-    <input type="text" id="empresaNomeRecibo" value="Elite Car." />
+    <label for="reciboClienteNome">Nome do cliente</label>
+    <input type="text" id="reciboClienteNome" />
 
-    <label for="empresaEnderecoRecibo">Endereço da empresa</label>
-    <input type="text" id="empresaEnderecoRecibo" value="Qr3 Conjunto N Casa 6" />
+    <label for="reciboValorPago">Valor pago (R$)</label>
+    <input type="number" id="reciboValorPago" min="0" step="0.01" />
 
-    <label for="empresaTelefoneRecibo">Telefone da empresa</label>
-    <input type="text" id="empresaTelefoneRecibo" value="(61) 98163-7286" />
+    <label for="reciboData">Data</label>
+    <input type="text" id="reciboData" readonly />
 
-    <label for="clienteNomeRecibo">Nome do cliente</label>
-    <input type="text" id="clienteNomeRecibo" />
+    <label for="reciboHora">Hora</label>
+    <input type="text" id="reciboHora" readonly />
 
-    <label for="dataRecibo">Data</label>
-    <input type="text" id="dataRecibo" readonly />
-
-    <label for="horaRecibo">Hora</label>
-    <input type="text" id="horaRecibo" readonly />
-
-    <label for="valorTotalRecibo">Valor total</label>
-    <input type="number" id="valorTotalRecibo" min="0" step="0.01" value="0.00" />
-
-    <label for="valorEntradaRecibo">Valor entrada</label>
-    <input type="number" id="valorEntradaRecibo" min="0" step="0.01" value="0.00" />
-
-    <label for="valorRestanteRecibo">Valor restante</label>
-    <input type="number" id="valorRestanteRecibo" readonly />
-
-    <label for="descricaoRecibo">Descrição</label>
-    <textarea id="descricaoRecibo"></textarea>
+    <label for="reciboObservacoes" style="margin-top: 15px;">Observações</label>
+    <textarea id="reciboObservacoes" placeholder="Escreva aqui observações adicionais..."></textarea>
 
     <div class="signatures">
       <div class="signature-box">Assinatura do cliente</div>
@@ -290,43 +294,33 @@
     </div>
 
     <div class="buttons">
-      <button id="baixarPdfRecibo" class="no-print">Baixar PDF</button>
-      <button id="imprimirRecibo" class="no-print">Imprimir</button>
-      <button id="compartilharRecibo" class="no-print">Compartilhar</button>
+      <button id="baixarPdfRecibo" class="no-print">Baixar PDF do Recibo</button>
     </div>
   </section>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  function atualizarDataHora() {
-    const agora = new Date();
-    const data = agora.toLocaleDateString('pt-BR');
-    const hora = agora.toLocaleTimeString('pt-BR', { hour12: false });
-    document.getElementById('dataOrcamento').value = data;
-    document.getElementById('horaOrcamento').value = hora;
-    document.getElementById('dataRecibo').value = data;
-    document.getElementById('horaRecibo').value = hora;
-  }
-  atualizarDataHora();
-  setInterval(atualizarDataHora, 60000);
+  window.onload = () => {
+    // Preencher data e hora automaticamente nos campos
+    const dataAtual = new Date();
+    const formatDate = (d) =>
+      d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const formatTime = (d) =>
+      d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-  function atualizarTotalOrcamento() {
-    let total = 0;
-    document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
-      const q = +row.querySelector('.item-quant').value || 0;
-      const p = +row.querySelector('.item-preco').value || 0;
-      const t = q * p;
-      row.querySelector('.item-total').textContent = t.toFixed(2);
-      total += t;
-    });
-    document.getElementById('totalOrcamento').textContent = total.toFixed(2);
-  }
+    document.getElementById('dataOrcamento').value = formatDate(dataAtual);
+    document.getElementById('horaOrcamento').value = formatTime(dataAtual);
 
-  document.getElementById('addItemBtn').onclick = () => {
+    document.getElementById('reciboData').value = formatDate(dataAtual);
+    document.getElementById('reciboHora').value = formatTime(dataAtual);
+  };
+
+  // Adicionar nova linha na tabela do orçamento
+  document.getElementById('addItemBtn').addEventListener('click', () => {
     const tbody = document.querySelector('#itensTabela tbody');
     const tr = document.createElement('tr');
+
     tr.innerHTML = `
       <td><input type="text" class="item-desc" placeholder="Descrição" /></td>
       <td><input type="number" class="item-quant" min="1" value="1" /></td>
@@ -334,179 +328,245 @@
       <td class="item-total">0.00</td>
     `;
     tbody.appendChild(tr);
-    tr.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
-  };
+    attachInputListeners(tr);
+  });
 
-  document.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
-  atualizarTotalOrcamento();
+  // Atualizar total quando muda quantidade ou preço unitário
+  function attachInputListeners(tr) {
+    const quantInput = tr.querySelector('.item-quant');
+    const precoInput = tr.querySelector('.item-preco');
+    const totalTd = tr.querySelector('.item-total');
 
-  function atualizarValorRestante() {
-    const t = +document.getElementById('valorTotalRecibo').value || 0;
-    const e = +document.getElementById('valorEntradaRecibo').value || 0;
-    document.getElementById('valorRestanteRecibo').value = (t - e).toFixed(2);
-  }
-
-  document.getElementById('valorTotalRecibo').oninput = atualizarValorRestante;
-  document.getElementById('valorEntradaRecibo').oninput = atualizarValorRestante;
-  atualizarValorRestante();
-
-  async function gerarPdf(elementId) {
-    const element = document.getElementById(elementId);
-
-    // Esconde botões para não aparecerem no PDF
-    document.querySelectorAll(`#${elementId} .no-print`).forEach(b => b.style.display = 'none');
-
-    const canvas = await html2canvas(element, { scale: 2, useCORS: true, scrollY: -window.scrollY });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-
-    // Calcula dimensões para caber A4 mantendo proporção
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    let position = 0;
-
-    if (pdfHeight <= pdf.internal.pageSize.getHeight()) {
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-    } else {
-      // Multi-página
-      let canvasHeight = canvas.height;
-      let pageHeightPx = (canvas.width * pdf.internal.pageSize.getHeight()) / pdfWidth;
-      let renderedHeight = 0;
-
-      while (renderedHeight < canvasHeight) {
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.min(pageHeightPx, canvasHeight - renderedHeight);
-
-        const ctx = pageCanvas.getContext('2d');
-        ctx.drawImage(
-          canvas,
-          0,
-          renderedHeight,
-          canvas.width,
-          pageCanvas.height,
-          0,
-          0,
-          canvas.width,
-          pageCanvas.height
-        );
-
-        const pageData = pageCanvas.toDataURL('image/png');
-        if (renderedHeight > 0) pdf.addPage();
-        pdf.addImage(pageData, 'PNG', 0, 0, pdfWidth, (pageCanvas.height * pdfWidth) / canvas.width);
-
-        renderedHeight += pageHeightPx;
-      }
+    function updateTotal() {
+      const quant = parseFloat(quantInput.value) || 0;
+      const preco = parseFloat(precoInput.value) || 0;
+      const total = quant * preco;
+      totalTd.textContent = total.toFixed(2);
+      updateTotalOrcamento();
     }
 
-    // Restaura visibilidade dos botões
-    document.querySelectorAll(`#${elementId} .no-print`).forEach(b => b.style.display = '');
-
-    pdf.save(elementId + '.pdf');
+    quantInput.addEventListener('input', updateTotal);
+    precoInput.addEventListener('input', updateTotal);
   }
 
-  document.getElementById('baixarPdfOrcamento').onclick = () => gerarPdf('orcamento');
-  document.getElementById('baixarPdfRecibo').onclick = () => gerarPdf('recibo');
+  // Inicializar input listeners nas linhas já existentes
+  document.querySelectorAll('#itensTabela tbody tr').forEach(tr => attachInputListeners(tr));
 
-  document.getElementById('imprimirOrcamento').onclick = () => {
-    window.print();
-  };
-  document.getElementById('imprimirRecibo').onclick = () => {
-    window.print();
-  };
-
-  function compartilharOrcamento() {
-    const empresa = document.getElementById('empresaNome').value.trim();
-    const endereco = document.getElementById('empresaEndereco').value.trim();
-    const telefone = document.getElementById('empresaTelefone').value.trim();
-    const cliente = document.getElementById('clienteNome').value.trim();
-    const modelo = document.getElementById('veiculoModelo').value.trim();
-    const cor = document.getElementById('veiculoCor').value.trim();
-    const placa = document.getElementById('veiculoPlaca').value.trim();
-    const obs = document.getElementById('observacoesOrcamento').value.trim();
-    const total = document.getElementById('totalOrcamento').textContent.trim();
-    const data = document.getElementById('dataOrcamento').value;
-    const hora = document.getElementById('horaOrcamento').value;
-
-    let itens = '';
-    document.querySelectorAll('#itensTabela tbody tr').forEach((row, i) => {
-      const desc = row.querySelector('.item-desc').value.trim();
-      const q = row.querySelector('.item-quant').value.trim();
-      const p = row.querySelector('.item-preco').value.trim();
-      const t = row.querySelector('.item-total').textContent.trim();
-      if(desc) {
-        itens += `\n  ${i + 1}. ${desc} - Quant: ${q} - Unitário: R$ ${p} - Total: R$ ${t}`;
-      }
+  // Atualizar total geral do orçamento
+  function updateTotalOrcamento() {
+    const totalSpan = document.getElementById('totalOrcamento');
+    let soma = 0;
+    document.querySelectorAll('.item-total').forEach(td => {
+      soma += parseFloat(td.textContent) || 0;
     });
-
-    const texto = 
-`Orçamento - ${empresa}
-Endereço: ${endereco}
-Telefone: ${telefone}
-Data: ${data} Hora: ${hora}
-
-Cliente: ${cliente}
-Veículo: Modelo: ${modelo}, Cor: ${cor}, Placa: ${placa}
-
-Itens:
-${itens}
-
-Observações:
-${obs}
-
-Total: R$ ${total}`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: `Orçamento - ${empresa}`,
-        text: texto,
-      }).catch(console.error);
-    } else {
-      alert('Compartilhamento não suportado neste navegador.');
-    }
+    totalSpan.textContent = soma.toFixed(2);
   }
 
-  function compartilharRecibo() {
-    const empresa = document.getElementById('empresaNomeRecibo').value.trim();
-    const endereco = document.getElementById('empresaEnderecoRecibo').value.trim();
-    const telefone = document.getElementById('empresaTelefoneRecibo').value.trim();
-    const cliente = document.getElementById('clienteNomeRecibo').value.trim();
-    const data = document.getElementById('dataRecibo').value;
-    const hora = document.getElementById('horaRecibo').value;
-    const valorTotal = document.getElementById('valorTotalRecibo').value;
-    const valorEntrada = document.getElementById('valorEntradaRecibo').value;
-    const valorRestante = document.getElementById('valorRestanteRecibo').value;
-    const descricao = document.getElementById('descricaoRecibo').value.trim();
+  // Gerar PDF do orçamento em uma única página mesmo no celular
+  document.getElementById('baixarPdfOrcamento').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
 
-    const texto = 
-`Recibo - ${empresa}
-Endereço: ${endereco}
-Telefone: ${telefone}
-Data: ${data} Hora: ${hora}
+    const margem = 10;
+    let y = margem;
 
-Cliente: ${cliente}
-
-Descrição:
-${descricao}
-
-Valor total: R$ ${valorTotal}
-Valor entrada: R$ ${valorEntrada}
-Valor restante: R$ ${valorRestante}`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: `Recibo - ${empresa}`,
-        text: texto,
-      }).catch(console.error);
+    // Título e logo
+    const logoImg = document.querySelector('#orcamento .logo');
+    if (logoImg && logoImg.src) {
+      // Adicionar imagem base64
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', margem, y, 40, 20);
+        addTextAfterImage();
+      };
+      img.src = logoImg.src;
     } else {
-      alert('Compartilhamento não suportado neste navegador.');
+      addTextAfterImage();
     }
-  }
 
-  document.getElementById('compartilharOrcamento').onclick = compartilharOrcamento;
-  document.getElementById('compartilharRecibo').onclick = compartilharRecibo;
+    function addTextAfterImage() {
+      y += 25;
+
+      doc.setFontSize(16);
+      doc.text('Elite Car', margem, y);
+      y += 8;
+      doc.setFontSize(14);
+      doc.text('Orçamento', margem, y);
+      y += 10;
+
+      // Empresa info
+      doc.setFontSize(10);
+      const empresaNome = document.getElementById('empresaNome').value;
+      const empresaEndereco = document.getElementById('empresaEndereco').value;
+      const empresaTelefone = document.getElementById('empresaTelefone').value;
+
+      doc.text(`Empresa: ${empresaNome}`, margem, y);
+      y += 6;
+      doc.text(`Endereço: ${empresaEndereco}`, margem, y);
+      y += 6;
+      doc.text(`Telefone: ${empresaTelefone}`, margem, y);
+      y += 10;
+
+      // Cliente e veículo
+      const clienteNome = document.getElementById('clienteNome').value;
+      const veiculoModelo = document.getElementById('veiculoModelo').value;
+      const veiculoCor = document.getElementById('veiculoCor').value;
+      const veiculoPlaca = document.getElementById('veiculoPlaca').value;
+      const dataOrcamento = document.getElementById('dataOrcamento').value;
+      const horaOrcamento = document.getElementById('horaOrcamento').value;
+
+      doc.text(`Cliente: ${clienteNome}`, margem, y);
+      y += 6;
+      doc.text(`Veículo: ${veiculoModelo}`, margem, y);
+      y += 6;
+      doc.text(`Cor: ${veiculoCor}`, margem, y);
+      y += 6;
+      doc.text(`Placa: ${veiculoPlaca}`, margem, y);
+      y += 6;
+      doc.text(`Data: ${dataOrcamento}`, margem, y);
+      y += 6;
+      doc.text(`Hora: ${horaOrcamento}`, margem, y);
+      y += 10;
+
+      // Tabela
+      doc.setFontSize(11);
+      const headers = ['Item', 'Qtd', 'Preço Unitário', 'Total'];
+      const startX = margem;
+      const colWidths = [90, 20, 35, 35]; // Ajustado: item maior, qtd menor
+      let tableY = y;
+
+      // Cabeçalho
+      let x = startX;
+      headers.forEach((header, i) => {
+        doc.setFont(undefined, 'bold');
+        doc.text(header, x + 1, tableY);
+        x += colWidths[i];
+      });
+      y += 7;
+
+      // Linhas
+      const rows = [];
+      document.querySelectorAll('#itensTabela tbody tr').forEach(tr => {
+        const desc = tr.querySelector('.item-desc').value || '';
+        const quant = tr.querySelector('.item-quant').value || '';
+        const preco = tr.querySelector('.item-preco').value || '';
+        const total = (parseFloat(quant) * parseFloat(preco)).toFixed(2);
+
+        rows.push([desc, quant, `R$ ${parseFloat(preco).toFixed(2)}`, `R$ ${total}`]);
+      });
+
+      rows.forEach(row => {
+        x = startX;
+        row.forEach((cell, i) => {
+          doc.setFont(undefined, 'normal');
+          doc.text(String(cell), x + 1, y);
+          x += colWidths[i];
+        });
+        y += 7;
+      });
+
+      y += 5;
+      // Total geral
+      const totalOrcamento = document.getElementById('totalOrcamento').textContent;
+      doc.setFont(undefined, 'bold');
+      doc.text(`Total Geral: R$ ${totalOrcamento}`, margem, y);
+      y += 10;
+
+      // Observações
+      const obs = document.getElementById('observacoesOrcamento').value;
+      if (obs) {
+        doc.setFont(undefined, 'normal');
+        doc.text('Observações:', margem, y);
+        y += 6;
+        const splitObs = doc.splitTextToSize(obs, 180);
+        doc.text(splitObs, margem, y);
+        y += splitObs.length * 6;
+      }
+
+      y += 10;
+
+      // Assinaturas
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const assinaturasY = y;
+
+      // Linhas assinaturas
+      const assinaturaWidth = (pageWidth - margem * 2) / 2 - 10;
+      doc.line(margem, assinaturasY, margem + assinaturaWidth, assinaturasY); // cliente
+      doc.line(pageWidth / 2 + 10, assinaturasY, pageWidth - margem, assinaturasY); // empresa
+
+      doc.text('Assinatura do cliente', margem, assinaturasY + 6);
+      doc.text('Assinatura da empresa', pageWidth / 2 + 10, assinaturasY + 6);
+
+      // Salvar arquivo
+      doc.save('orcamento.pdf');
+    }
+
+    // Se tiver imagem, aguarde, se não, chama direto
+    if (!document.querySelector('#orcamento .logo')) {
+      addTextAfterImage();
+    }
+  });
+
+  // Gerar PDF do recibo em uma única página também
+  document.getElementById('baixarPdfRecibo').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+
+    const margem = 10;
+    let y = margem;
+
+    doc.setFontSize(16);
+    doc.text('Elite Car', margem, y);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text('Recibo', margem, y);
+    y += 15;
+
+    const clienteNome = document.getElementById('reciboClienteNome').value;
+    const valorPago = document.getElementById('reciboValorPago').value;
+    const dataRecibo = document.getElementById('reciboData').value;
+    const horaRecibo = document.getElementById('reciboHora').value;
+    const obs = document.getElementById('reciboObservacoes').value;
+
+    doc.setFontSize(12);
+    doc.text(`Cliente: ${clienteNome}`, margem, y);
+    y += 8;
+    doc.text(`Valor Pago: R$ ${parseFloat(valorPago).toFixed(2) || '0.00'}`, margem, y);
+    y += 8;
+    doc.text(`Data: ${dataRecibo}`, margem, y);
+    y += 8;
+    doc.text(`Hora: ${horaRecibo}`, margem, y);
+    y += 10;
+
+    if (obs) {
+      doc.text('Observações:', margem, y);
+      y += 6;
+      const splitObs = doc.splitTextToSize(obs, 180);
+      doc.text(splitObs, margem, y);
+      y += splitObs.length * 6;
+    }
+
+    y += 10;
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const assinaturasY = y;
+
+    const assinaturaWidth = (pageWidth - margem * 2) / 2 - 10;
+    doc.line(margem, assinaturasY, margem + assinaturaWidth, assinaturasY);
+    doc.line(pageWidth / 2 + 10, assinaturasY, pageWidth - margem, assinaturasY);
+
+    doc.text('Assinatura do cliente', margem, assinaturasY + 6);
+    doc.text('Assinatura da empresa', pageWidth / 2 + 10, assinaturasY + 6);
+
+    doc.save('recibo.pdf');
+  });
 </script>
 </body>
 </html>
