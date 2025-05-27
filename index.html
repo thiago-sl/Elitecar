@@ -31,11 +31,9 @@
     }
 
     section {
-      /* removido fundo branco aqui para evitar duplicação com main */
       border-radius: 10px;
       padding: 20px 30px;
       margin-bottom: 30px;
-      /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); removido */
     }
 
     h2 {
@@ -164,6 +162,9 @@
       max-width: 150px;
       margin: 0 auto 20px;
     }
+    h1{
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -175,10 +176,17 @@
   <!-- ORÇAMENTO -->
   <section id="orcamento">
     <img src="./img/imgg.avif" alt="Logo da Empresa" class="logo" />
+    <h1>Elite Car</h1>
     <h2>Orçamento</h2>
 
     <label for="empresaNome">Nome da empresa</label>
-    <input type="text" id="empresaNome" value="Elite Car." />
+    <input type="text" id="empresaNome" value="Elite Car ." />
+
+    <label for="empresaEndereco">Endereço da empresa</label>
+    <input type="text" id="empresaEndereco" value="Qr3 Conjunto N Casa 6" />
+
+    <label for="empresaTelefone">Telefone da empresa</label>
+    <input type="text" id="empresaTelefone" value="(61) 98163-7286" />
 
     <label for="clienteNome">Nome do cliente</label>
     <input type="text" id="clienteNome" />
@@ -242,11 +250,18 @@
 
   <!-- RECIBO -->
   <section id="recibo">
-    <img src="logo.png" alt="Logo da Empresa" class="logo" />
+    <img src="./img/imgg.avif" alt="Logo da Empresa" class="logo" />
+    <h1>Elite Car</h1>
     <h2>Recibo</h2>
 
     <label for="empresaNomeRecibo">Nome da empresa</label>
-    <input type="text" id="empresaNomeRecibo" value="Elite car." />
+    <input type="text" id="empresaNomeRecibo" value="Elite Car." />
+
+    <label for="empresaEnderecoRecibo">Endereço da empresa</label>
+    <input type="text" id="empresaEnderecoRecibo" value="Qr3 Conjunto N Casa 6" />
+
+    <label for="empresaTelefoneRecibo">Telefone da empresa</label>
+    <input type="text" id="empresaTelefoneRecibo" value="(61) 98163-7286" />
 
     <label for="clienteNomeRecibo">Nome do cliente</label>
     <input type="text" id="clienteNomeRecibo" />
@@ -282,11 +297,9 @@
   </section>
 </main>
 
-<!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  // Atualiza data e hora automaticamente
   function atualizarDataHora() {
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-BR');
@@ -299,7 +312,6 @@
   atualizarDataHora();
   setInterval(atualizarDataHora, 60000);
 
-  // Atualiza total no orçamento
   function atualizarTotalOrcamento() {
     let total = 0;
     document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
@@ -312,7 +324,6 @@
     document.getElementById('totalOrcamento').textContent = total.toFixed(2);
   }
 
-  // Adicionar novo item na tabela
   document.getElementById('addItemBtn').onclick = () => {
     const tbody = document.querySelector('#itensTabela tbody');
     const tr = document.createElement('tr');
@@ -326,11 +337,9 @@
     tr.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
   };
 
-  // Atualiza total ao alterar quantidade ou preço
   document.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
   atualizarTotalOrcamento();
 
-  // Atualiza valor restante no recibo
   function atualizarValorRestante() {
     const t = +document.getElementById('valorTotalRecibo').value || 0;
     const e = +document.getElementById('valorEntradaRecibo').value || 0;
@@ -341,69 +350,163 @@
   document.getElementById('valorEntradaRecibo').oninput = atualizarValorRestante;
   atualizarValorRestante();
 
-  // Gera PDF da seção específica (orcamento ou recibo)
-  async function gerarPdfDaSecao(id, nomeArquivo) {
-    const { jsPDF } = window.jspdf;
-    const sec = document.getElementById(id);
+  async function gerarPdf(elementId) {
+    const element = document.getElementById(elementId);
 
-    // Esconde botões antes de capturar
-    sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = 'none');
+    // Esconde botões para não aparecerem no PDF
+    document.querySelectorAll(`#${elementId} .no-print`).forEach(b => b.style.display = 'none');
 
-    // Ajusta temporariamente o estilo para PDF (para evitar cortes)
-    const originalWidth = sec.style.width;
-    const originalPadding = sec.style.padding;
-    sec.style.width = '210mm'; // largura A4
-    sec.style.padding = '10mm';
+    const canvas = await html2canvas(element, { scale: 2, useCORS: true, scrollY: -window.scrollY });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
 
-    const canvas = await html2canvas(sec, { scale: 2 });
+    // Calcula dimensões para caber A4 mantendo proporção
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    // Restaura estilos
-    sec.style.width = originalWidth;
-    sec.style.padding = originalPadding;
+    let position = 0;
 
-    // Mostra os botões depois
-    sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = '');
+    if (pdfHeight <= pdf.internal.pageSize.getHeight()) {
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+    } else {
+      // Multi-página
+      let canvasHeight = canvas.height;
+      let pageHeightPx = (canvas.width * pdf.internal.pageSize.getHeight()) / pdfWidth;
+      let renderedHeight = 0;
 
-    const img = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p','mm','a4');
-    const w = pdf.internal.pageSize.getWidth();
-    const h = (canvas.height * w) / canvas.width;
-    pdf.addImage(img, 'PNG', 0, 0, w, h);
-    pdf.save(nomeArquivo);
+      while (renderedHeight < canvasHeight) {
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pageHeightPx, canvasHeight - renderedHeight);
+
+        const ctx = pageCanvas.getContext('2d');
+        ctx.drawImage(
+          canvas,
+          0,
+          renderedHeight,
+          canvas.width,
+          pageCanvas.height,
+          0,
+          0,
+          canvas.width,
+          pageCanvas.height
+        );
+
+        const pageData = pageCanvas.toDataURL('image/png');
+        if (renderedHeight > 0) pdf.addPage();
+        pdf.addImage(pageData, 'PNG', 0, 0, pdfWidth, (pageCanvas.height * pdfWidth) / canvas.width);
+
+        renderedHeight += pageHeightPx;
+      }
+    }
+
+    // Restaura visibilidade dos botões
+    document.querySelectorAll(`#${elementId} .no-print`).forEach(b => b.style.display = '');
+
+    pdf.save(elementId + '.pdf');
   }
 
-  // Eventos para baixar PDF
-  document.getElementById('baixarPdfOrcamento').onclick = () => gerarPdfDaSecao('orcamento','orcamento.pdf');
-  document.getElementById('baixarPdfRecibo').onclick = () => gerarPdfDaSecao('recibo','recibo.pdf');
+  document.getElementById('baixarPdfOrcamento').onclick = () => gerarPdf('orcamento');
+  document.getElementById('baixarPdfRecibo').onclick = () => gerarPdf('recibo');
 
-  // Compartilhar via email simples
-  function shareEmail(subj, body) {
-    window.location.href = `mailto:?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('imprimirOrcamento').onclick = () => {
+    window.print();
+  };
+  document.getElementById('imprimirRecibo').onclick = () => {
+    window.print();
+  };
+
+  function compartilharOrcamento() {
+    const empresa = document.getElementById('empresaNome').value.trim();
+    const endereco = document.getElementById('empresaEndereco').value.trim();
+    const telefone = document.getElementById('empresaTelefone').value.trim();
+    const cliente = document.getElementById('clienteNome').value.trim();
+    const modelo = document.getElementById('veiculoModelo').value.trim();
+    const cor = document.getElementById('veiculoCor').value.trim();
+    const placa = document.getElementById('veiculoPlaca').value.trim();
+    const obs = document.getElementById('observacoesOrcamento').value.trim();
+    const total = document.getElementById('totalOrcamento').textContent.trim();
+    const data = document.getElementById('dataOrcamento').value;
+    const hora = document.getElementById('horaOrcamento').value;
+
+    let itens = '';
+    document.querySelectorAll('#itensTabela tbody tr').forEach((row, i) => {
+      const desc = row.querySelector('.item-desc').value.trim();
+      const q = row.querySelector('.item-quant').value.trim();
+      const p = row.querySelector('.item-preco').value.trim();
+      const t = row.querySelector('.item-total').textContent.trim();
+      if(desc) {
+        itens += `\n  ${i + 1}. ${desc} - Quant: ${q} - Unitário: R$ ${p} - Total: R$ ${t}`;
+      }
+    });
+
+    const texto = 
+`Orçamento - ${empresa}
+Endereço: ${endereco}
+Telefone: ${telefone}
+Data: ${data} Hora: ${hora}
+
+Cliente: ${cliente}
+Veículo: Modelo: ${modelo}, Cor: ${cor}, Placa: ${placa}
+
+Itens:
+${itens}
+
+Observações:
+${obs}
+
+Total: R$ ${total}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `Orçamento - ${empresa}`,
+        text: texto,
+      }).catch(console.error);
+    } else {
+      alert('Compartilhamento não suportado neste navegador.');
+    }
   }
 
-  function buildOrcText() {
-    let texto = '--- Orçamento ---\n';
-    texto += 'Empresa: ' + document.getElementById('empresaNome').value + '\n';
-    texto += 'Cliente: ' + document.getElementById('clienteNome').value + '\n';
-    texto += 'Modelo do veículo: ' + document.getElementById('veiculoModelo').value + '\n';
-    texto += 'Cor do veículo: ' + document.getElementById('veiculoCor').value + '\n';
-    texto += 'Placa do veículo: ' + document.getElementById('veiculoPlaca').value + '\n';
-    texto += 'Total: R$ ' + document.getElementById('totalOrcamento').textContent + '\n';
-    texto += 'Observações: ' + document.getElementById('observacoesOrcamento').value + '\n';
-    return texto;
+  function compartilharRecibo() {
+    const empresa = document.getElementById('empresaNomeRecibo').value.trim();
+    const endereco = document.getElementById('empresaEnderecoRecibo').value.trim();
+    const telefone = document.getElementById('empresaTelefoneRecibo').value.trim();
+    const cliente = document.getElementById('clienteNomeRecibo').value.trim();
+    const data = document.getElementById('dataRecibo').value;
+    const hora = document.getElementById('horaRecibo').value;
+    const valorTotal = document.getElementById('valorTotalRecibo').value;
+    const valorEntrada = document.getElementById('valorEntradaRecibo').value;
+    const valorRestante = document.getElementById('valorRestanteRecibo').value;
+    const descricao = document.getElementById('descricaoRecibo').value.trim();
+
+    const texto = 
+`Recibo - ${empresa}
+Endereço: ${endereco}
+Telefone: ${telefone}
+Data: ${data} Hora: ${hora}
+
+Cliente: ${cliente}
+
+Descrição:
+${descricao}
+
+Valor total: R$ ${valorTotal}
+Valor entrada: R$ ${valorEntrada}
+Valor restante: R$ ${valorRestante}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `Recibo - ${empresa}`,
+        text: texto,
+      }).catch(console.error);
+    } else {
+      alert('Compartilhamento não suportado neste navegador.');
+    }
   }
 
-  function buildRecText() {
-    return '--- Recibo ---\nEmpresa: '+document.getElementById('empresaNomeRecibo').value+'\nCliente: '+document.getElementById('clienteNomeRecibo').value+'\nTotal: R$'+document.getElementById('valorTotalRecibo').value;
-  }
-
-  document.getElementById('compartilharOrcamento').onclick = () => shareEmail('Orçamento', buildOrcText());
-  document.getElementById('compartilharRecibo').onclick = () => shareEmail('Recibo', buildRecText());
-
-  // Inicializa inputs eventuais que foram adicionados
-  document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
-    row.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
-  });
+  document.getElementById('compartilharOrcamento').onclick = compartilharOrcamento;
+  document.getElementById('compartilharRecibo').onclick = compartilharRecibo;
 </script>
 </body>
 </html>
