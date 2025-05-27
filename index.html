@@ -1,296 +1,292 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Orçamento e Recibo</title>
-<style>
-  /* Reset básico */
-  * { box-sizing: border-box; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orçamento e Recibo</title>
+  <style>
+    * { box-sizing: border-box; }
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    background: #f4f7f8;
-    color: #333;
-  }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f4f7f8;
+      color: #333;
+    }
 
-  header {
-    text-align: center;
-    padding: 1rem;
-    background: #1e88e5;
-    color: white;
-  }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background: #1e88e5;
+      color: white;
+    }
 
-  main {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 0 15px 30px;
-  }
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 15px 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
 
-  section {
-    background: white;
-    border-radius: 10px;
-    padding: 20px 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
+    section {
+      /* removido fundo branco aqui para evitar duplicação com main */
+      border-radius: 10px;
+      padding: 20px 30px;
+      margin-bottom: 30px;
+      /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); removido */
+    }
 
-  h2 {
-    color: #1e88e5;
-    border-bottom: 2px solid #1e88e5;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-  }
+    h2 {
+      color: #1e88e5;
+      border-bottom: 2px solid #1e88e5;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
 
-  label {
-    display: block;
-    margin-top: 15px;
-    font-weight: 600;
-  }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
 
-  input[type="text"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 5px;
-    border: 1.5px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-    resize: vertical;
-  }
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 5px;
+      border: 1.5px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+      resize: vertical;
+    }
 
-  textarea { min-height: 60px; }
+    textarea { min-height: 60px; }
 
-  .flex-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
+    .flex-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-  .flex-col-2 {
-    flex: 1 1 48%;
-  }
+    .flex-col-2 {
+      flex: 1 1 48%;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
 
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px 10px;
-    text-align: left;
-  }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      text-align: left;
+    }
 
-  th {
-    background: #e3f2fd;
-  }
+    th {
+      background: #e3f2fd;
+    }
 
-  /* Abreviação de Quantidade no mobile */
-  th .abbr { display: none; }
-  th .full { display: inline; }
+    th .abbr { display: none; }
+    th .full { display: inline; }
 
-  .signatures {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
+    .signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-  .signature-box {
-    flex: 1;
-    border-top: 1px solid #999;
-    text-align: center;
-    padding-top: 8px;
-    font-size: 0.9rem;
-    color: #555;
-    min-width: 140px;
-  }
+    .signature-box {
+      flex: 1;
+      border-top: 1px solid #999;
+      text-align: center;
+      padding-top: 8px;
+      font-size: 0.9rem;
+      color: #555;
+      min-width: 140px;
+    }
 
-  .buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-  button {
-    background: #1e88e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    flex-grow: 1;
-    min-width: 140px;
-  }
-  button:hover { background: #1669bb; }
+    button {
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      flex-grow: 1;
+      min-width: 140px;
+    }
 
-  /* Ocultar botões no PDF */
-  @media print {
-    button, .no-print { display: none !important; }
-  }
+    button:hover { background: #1669bb; }
 
-  /* Responsividade */
-  @media (max-width: 600px) {
-    .flex-row { flex-direction: column; }
-    .flex-col-2 { flex: 1 1 100%; }
-    .signatures { flex-direction: column; gap: 40px; }
-    .signature-box { min-width: 100%; margin-bottom: 10px; }
-    .buttons { flex-direction: column; gap: 15px; }
-    button { min-width: 100%; flex-grow: 0; }
-    /* Switch Quantidade → Qtd. */
-    th .full { display: none; }
-    th .abbr { display: inline; }
-  }
-</style>
+    @media print {
+      button, .no-print { display: none !important; }
+      main {
+        box-shadow: none;
+        margin: 0;
+        border-radius: 0;
+      }
+      body {
+        background: white;
+        color: black;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .flex-row { flex-direction: column; }
+      .flex-col-2 { flex: 1 1 100%; }
+      .signatures { flex-direction: column; gap: 40px; }
+      .signature-box { min-width: 100%; margin-bottom: 10px; }
+      .buttons { flex-direction: column; gap: 15px; }
+      button { min-width: 100%; flex-grow: 0; }
+      th .full { display: none; }
+      th .abbr { display: inline; }
+    }
+
+    .logo {
+      display: block;
+      max-width: 150px;
+      margin: 0 auto 20px;
+    }
+  </style>
 </head>
 <body>
 <header>
-  <h1>Sistema de Orçamento e Recibo</h1>
+  <h1>Elite Car Orçamento e Recibo</h1>
 </header>
 
 <main>
   <!-- ORÇAMENTO -->
   <section id="orcamento">
+    <img src="./img/imgg.avif" alt="Logo da Empresa" class="logo" />
     <h2>Orçamento</h2>
 
+    <label for="empresaNome">Nome da empresa</label>
+    <input type="text" id="empresaNome" value="Elite Car." />
+
+    <label for="clienteNome">Nome do cliente</label>
+    <input type="text" id="clienteNome" />
+
+    <!-- Novos campos do veículo -->
     <div class="flex-row">
       <div class="flex-col-2">
-        <label>Empresa</label>
-        <input type="text" id="empresaNome" value="Empresa Exemplo LTDA" />
-        <input type="text" id="empresaEndereco" value="Rua Exemplo, 123 - Cidade/UF" />
-        <input type="text" id="empresaTelefone" value="(99) 99999-9999" />
+        <label for="veiculoModelo">Modelo do veículo</label>
+        <input type="text" id="veiculoModelo" placeholder="Ex: Ford Ka" />
       </div>
       <div class="flex-col-2">
-        <label>Cliente</label>
-        <input type="text" id="clienteNome" placeholder="Nome do cliente" />
-        <input type="text" id="clienteEndereco" placeholder="Endereço do cliente" />
-        <input type="text" id="clienteTelefone" placeholder="Telefone do cliente" />
+        <label for="veiculoCor">Cor do veículo</label>
+        <input type="text" id="veiculoCor" placeholder="Ex: Vermelho" />
       </div>
     </div>
+    <label for="veiculoPlaca">Placa do veículo</label>
+    <input type="text" id="veiculoPlaca" placeholder="Ex: ABC-1234" />
 
-    <div class="flex-row" style="margin-top: 10px;">
-      <div class="flex-col-2">
-        <label>Data</label>
-        <input type="text" id="dataOrcamento" readonly />
-      </div>
-      <div class="flex-col-2">
-        <label>Hora</label>
-        <input type="text" id="horaOrcamento" readonly />
-      </div>
-    </div>
+    <label for="dataOrcamento">Data</label>
+    <input type="text" id="dataOrcamento" readonly />
 
-    <label>Descrição dos Serviços/Produtos</label>
-    <textarea id="descricaoOrcamento" placeholder="Descreva aqui..."></textarea>
+    <label for="horaOrcamento">Hora</label>
+    <input type="text" id="horaOrcamento" readonly />
 
     <table id="itensTabela">
       <thead>
         <tr>
-          <th>Descrição</th>
-          <th><span class="full">Quantidade</span><span class="abbr">Qtd.</span></th>
-          <th>Preço Unitário (R$)</th>
-          <th>Preço Total (R$)</th>
+          <th>Item</th>
+          <th>Quantidade</th>
+          <th>Preço Unitário</th>
+          <th>Total</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><input type="text" class="item-desc" placeholder="Item 1" /></td>
+          <td><input type="text" class="item-desc" placeholder="Descrição" /></td>
           <td><input type="number" class="item-quant" min="1" value="1" /></td>
           <td><input type="number" class="item-preco" min="0" step="0.01" value="0.00" /></td>
           <td class="item-total">0.00</td>
         </tr>
       </tbody>
     </table>
+    <button id="addItemBtn" class="no-print">Adicionar Item</button>
 
-    <button id="addItemBtn" class="no-print" style="margin-top:10px;">Adicionar Item</button>
+    <label for="observacoesOrcamento" style="margin-top: 25px;">Observações</label>
+    <textarea id="observacoesOrcamento" placeholder="Escreva aqui observações adicionais..."></textarea>
 
-    <label>Observação</label>
-    <textarea id="observacaoOrcamento" placeholder="Observações adicionais..."></textarea>
-
-    <h3>Total: R$ <span id="totalOrcamento">0.00</span></h3>
+    <p><strong>Total: R$ <span id="totalOrcamento">0.00</span></strong></p>
 
     <div class="signatures">
-      <div class="signature-box">Assinatura do Cliente</div>
-      <div class="signature-box">Assinatura do Prestador</div>
+      <div class="signature-box">Assinatura do cliente</div>
+      <div class="signature-box">Assinatura da empresa</div>
     </div>
 
     <div class="buttons">
       <button id="baixarPdfOrcamento" class="no-print">Baixar PDF</button>
+      <button id="imprimirOrcamento" class="no-print">Imprimir</button>
       <button id="compartilharOrcamento" class="no-print">Compartilhar</button>
     </div>
   </section>
 
   <!-- RECIBO -->
   <section id="recibo">
+    <img src="logo.png" alt="Logo da Empresa" class="logo" />
     <h2>Recibo</h2>
 
-    <div class="flex-row">
-      <div class="flex-col-2">
-        <label>Empresa</label>
-        <input type="text" id="empresaNomeRecibo" value="Empresa Exemplo LTDA" />
-        <input type="text" id="empresaEnderecoRecibo" value="Rua Exemplo, 123 - Cidade/UF" />
-        <input type="text" id="empresaTelefoneRecibo" value="(99) 99999-9999" />
-      </div>
-      <div class="flex-col-2">
-        <label>Cliente</label>
-        <input type="text" id="clienteNomeRecibo" placeholder="Nome do cliente" />
-        <input type="text" id="clienteEnderecoRecibo" placeholder="Endereço do cliente" />
-        <input type="text" id="clienteTelefoneRecibo" placeholder="Telefone do cliente" />
-      </div>
-    </div>
+    <label for="empresaNomeRecibo">Nome da empresa</label>
+    <input type="text" id="empresaNomeRecibo" value="Elite car." />
 
-    <div class="flex-row" style="margin-top: 10px;">
-      <div class="flex-col-2">
-        <label>Data</label>
-        <input type="text" id="dataRecibo" readonly />
-      </div>
-      <div class="flex-col-2">
-        <label>Hora</label>
-        <input type="text" id="horaRecibo" readonly />
-      </div>
-    </div>
+    <label for="clienteNomeRecibo">Nome do cliente</label>
+    <input type="text" id="clienteNomeRecibo" />
 
-    <label>Valor Total (R$)</label>
-    <input type="number" id="valorTotalRecibo" min="0" step="0.01" />
+    <label for="dataRecibo">Data</label>
+    <input type="text" id="dataRecibo" readonly />
 
-    <label>Valor Entrada (R$)</label>
-    <input type="number" id="valorEntradaRecibo" min="0" step="0.01" />
+    <label for="horaRecibo">Hora</label>
+    <input type="text" id="horaRecibo" readonly />
 
-    <label>Valor Restante (R$)</label>
+    <label for="valorTotalRecibo">Valor total</label>
+    <input type="number" id="valorTotalRecibo" min="0" step="0.01" value="0.00" />
+
+    <label for="valorEntradaRecibo">Valor entrada</label>
+    <input type="number" id="valorEntradaRecibo" min="0" step="0.01" value="0.00" />
+
+    <label for="valorRestanteRecibo">Valor restante</label>
     <input type="number" id="valorRestanteRecibo" readonly />
 
-    <label>Forma de Pagamento</label>
-    <select id="formaPagamentoRecibo">
-      <option>Dinheiro</option>
-      <option>Cartão de Crédito</option>
-      <option>Cartão de Débito</option>
-      <option>Pix</option>
-    </select>
+    <label for="descricaoRecibo">Descrição</label>
+    <textarea id="descricaoRecibo"></textarea>
 
     <div class="signatures">
-      <div class="signature-box">Assinatura do Cliente</div>
-      <div class="signature-box">Assinatura do Prestador</div>
+      <div class="signature-box">Assinatura do cliente</div>
+      <div class="signature-box">Assinatura da empresa</div>
     </div>
 
     <div class="buttons">
       <button id="baixarPdfRecibo" class="no-print">Baixar PDF</button>
+      <button id="imprimirRecibo" class="no-print">Imprimir</button>
       <button id="compartilharRecibo" class="no-print">Compartilhar</button>
     </div>
   </section>
 </main>
 
+<!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  // Atualiza data e hora
+  // Atualiza data e hora automaticamente
   function atualizarDataHora() {
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-BR');
@@ -303,7 +299,7 @@
   atualizarDataHora();
   setInterval(atualizarDataHora, 60000);
 
-  // Totais do orçamento
+  // Atualiza total no orçamento
   function atualizarTotalOrcamento() {
     let total = 0;
     document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
@@ -315,62 +311,99 @@
     });
     document.getElementById('totalOrcamento').textContent = total.toFixed(2);
   }
+
+  // Adicionar novo item na tabela
   document.getElementById('addItemBtn').onclick = () => {
     const tbody = document.querySelector('#itensTabela tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><input type="text" class="item-desc" placeholder="Item"/></td>
-      <td><input type="number" class="item-quant" min="1" value="1"/></td>
-      <td><input type="number" class="item-preco" min="0" step="0.01" value="0.00"/></td>
+      <td><input type="text" class="item-desc" placeholder="Descrição" /></td>
+      <td><input type="number" class="item-quant" min="1" value="1" /></td>
+      <td><input type="number" class="item-preco" min="0" step="0.01" value="0.00" /></td>
       <td class="item-total">0.00</td>
     `;
     tbody.appendChild(tr);
     tr.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
   };
+
+  // Atualiza total ao alterar quantidade ou preço
   document.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
   atualizarTotalOrcamento();
 
-  // Valor restante do recibo
+  // Atualiza valor restante no recibo
   function atualizarValorRestante() {
     const t = +document.getElementById('valorTotalRecibo').value || 0;
     const e = +document.getElementById('valorEntradaRecibo').value || 0;
     document.getElementById('valorRestanteRecibo').value = (t - e).toFixed(2);
   }
+
   document.getElementById('valorTotalRecibo').oninput = atualizarValorRestante;
   document.getElementById('valorEntradaRecibo').oninput = atualizarValorRestante;
   atualizarValorRestante();
 
-  // Gerar PDF de seção
+  // Gera PDF da seção específica (orcamento ou recibo)
   async function gerarPdfDaSecao(id, nomeArquivo) {
     const { jsPDF } = window.jspdf;
     const sec = document.getElementById(id);
+
+    // Esconde botões antes de capturar
     sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = 'none');
+
+    // Ajusta temporariamente o estilo para PDF (para evitar cortes)
+    const originalWidth = sec.style.width;
+    const originalPadding = sec.style.padding;
+    sec.style.width = '210mm'; // largura A4
+    sec.style.padding = '10mm';
+
     const canvas = await html2canvas(sec, { scale: 2 });
+
+    // Restaura estilos
+    sec.style.width = originalWidth;
+    sec.style.padding = originalPadding;
+
+    // Mostra os botões depois
     sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = '');
+
     const img = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p','mm','a4');
     const w = pdf.internal.pageSize.getWidth();
     const h = (canvas.height * w) / canvas.width;
-    pdf.addImage(img, 'PNG', 0, 10, w, h);
+    pdf.addImage(img, 'PNG', 0, 0, w, h);
     pdf.save(nomeArquivo);
   }
+
+  // Eventos para baixar PDF
   document.getElementById('baixarPdfOrcamento').onclick = () => gerarPdfDaSecao('orcamento','orcamento.pdf');
   document.getElementById('baixarPdfRecibo').onclick = () => gerarPdfDaSecao('recibo','recibo.pdf');
 
-  // Compartilhar via email
+  // Compartilhar via email simples
   function shareEmail(subj, body) {
     window.location.href = `mailto:?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
   }
+
   function buildOrcText() {
-    let s = '--- Orçamento ---\nEmpresa: '+document.getElementById('empresaNome').value+'\nCliente: '+document.getElementById('clienteNome').value+'\nTotal: R$'+document.getElementById('totalOrcamento').textContent;
-    return s;
+    let texto = '--- Orçamento ---\n';
+    texto += 'Empresa: ' + document.getElementById('empresaNome').value + '\n';
+    texto += 'Cliente: ' + document.getElementById('clienteNome').value + '\n';
+    texto += 'Modelo do veículo: ' + document.getElementById('veiculoModelo').value + '\n';
+    texto += 'Cor do veículo: ' + document.getElementById('veiculoCor').value + '\n';
+    texto += 'Placa do veículo: ' + document.getElementById('veiculoPlaca').value + '\n';
+    texto += 'Total: R$ ' + document.getElementById('totalOrcamento').textContent + '\n';
+    texto += 'Observações: ' + document.getElementById('observacoesOrcamento').value + '\n';
+    return texto;
   }
+
   function buildRecText() {
-    let s = '--- Recibo ---\nEmpresa: '+document.getElementById('empresaNomeRecibo').value+'\nCliente: '+document.getElementById('clienteNomeRecibo').value+'\nTotal: R$'+document.getElementById('valorTotalRecibo').value;
-    return s;
+    return '--- Recibo ---\nEmpresa: '+document.getElementById('empresaNomeRecibo').value+'\nCliente: '+document.getElementById('clienteNomeRecibo').value+'\nTotal: R$'+document.getElementById('valorTotalRecibo').value;
   }
+
   document.getElementById('compartilharOrcamento').onclick = () => shareEmail('Orçamento', buildOrcText());
   document.getElementById('compartilharRecibo').onclick = () => shareEmail('Recibo', buildRecText());
+
+  // Inicializa inputs eventuais que foram adicionados
+  document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
+    row.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
+  });
 </script>
 </body>
 </html>
