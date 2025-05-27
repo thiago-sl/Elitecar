@@ -1,532 +1,376 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Orçamento Elite Car - Estilizado</title>
+<title>Orçamento e Recibo</title>
 <style>
   /* Reset básico */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
     margin: 0;
-    padding: 20px;
-    color: #222;
+    background: #f4f7f8;
+    color: #333;
   }
 
-  .orcamento {
+  header {
+    text-align: center;
+    padding: 1rem;
+    background: #1e88e5;
+    color: white;
+  }
+
+  main {
     max-width: 900px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 30px 40px;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    margin: 20px auto;
+    padding: 0 15px 30px;
   }
 
-  /* Cabeçalho com logo + título */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 12px;
-    margin-bottom: 25px;
-  }
-  .logo-car {
-    max-width: 180px;
-  }
-  .logo-car img {
-    max-width: 100%;
-    height: auto;
-  }
-  .header-info {
-    text-align: right;
-  }
-  .header-info h1 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 2.2rem;
-    color: #27ae60;
-  }
-  .header-info p {
-    margin: 4px 0 0 0;
-    font-weight: 600;
-    color: #555;
-  }
-
-  /* Dados Cliente + Veículo */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+  section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px 30px;
     margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-  .campo {
-    display: flex;
-    flex-direction: column;
+
+  h2 {
+    color: #1e88e5;
+    border-bottom: 2px solid #1e88e5;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
   }
+
   label {
+    display: block;
+    margin-top: 15px;
     font-weight: 600;
-    font-size: 0.95rem;
-    color: #444;
-    margin-bottom: 6px;
   }
+
   input[type="text"],
   input[type="number"],
+  select,
   textarea {
-    padding: 10px 12px;
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 5px;
+    border: 1.5px solid #ddd;
+    border-radius: 5px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  input[type="text"]:focus,
-  input[type="number"]:focus,
-  textarea:focus {
-    outline: none;
-    box-shadow: 0 0 5px #27ae60aa;
-  }
-  textarea {
     resize: vertical;
   }
 
-  /* Data e aviso validade */
-  .datatime {
-    text-align: center;
-    font-size: 0.95rem;
-    color: #666;
-    margin-bottom: 35px;
-  }
-  .datatime strong {
-    color: #27ae60;
-  }
+  textarea { min-height: 60px; }
 
-  /* Tabela */
-  .table-wrapper {
-    overflow-x: auto;
-    margin-bottom: 20px;
-  }
-  table {
-    width: 90%;
-    border-collapse: separate;
-    border-spacing: 0 10px;
-    font-size: 1rem;
-    margin: auto;
-  }
-  thead th {
-    background-color: #27ae60;
-    color: white;
-    font-weight: 700;
-    padding: 14px 12px;
-    text-align: center;
-  }
-  tbody tr {
-    background-color: #e6f2ea;
-    transition: background-color 0.3s ease;
-  
-  }
-  tbody tr:hover {
-    background-color: #d1eadb;
-  }
-  tbody td {
-    padding: 12px 14px;
-    text-align: center;
-    vertical-align: middle;
-    color: #2a5d34;
-  }
-  tbody td input {
-    width: 80px;
-    font-size: 1rem;
-    padding: 6px;
-    text-align: center;
-  }
-  tbody td input:focus {
-  
-    box-shadow: 0 0 5px #27ae60aa;
-  }
-
-  /* Botão delete */
-  .botao-coluna button {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    font-weight: 700;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 6px;
-    padding: 4px 10px;
-    transition: background-color 0.25s ease;
-  }
-  .botao-coluna button:hover {
-    background: #c0392b;
-  }
-
-  /* Valor total */
-  .total {
-    text-align: right;
-    font-weight: 800;
-    font-size: 1.5rem;
-    color: #27ae60;
-    margin-top: 10px;
-    padding-top: 12px;
-  }
-
-  /* Controles */
-  .controls {
+  .flex-row {
     display: flex;
-    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .flex-col-2 {
+    flex: 1 1 48%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: left;
+  }
+
+  th {
+    background: #e3f2fd;
+  }
+
+  /* Abreviação de Quantidade no mobile */
+  th .abbr { display: none; }
+  th .full { display: inline; }
+
+  .signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .signature-box {
+    flex: 1;
+    border-top: 1px solid #999;
+    text-align: center;
+    padding-top: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    min-width: 140px;
+  }
+
+  .buttons {
+    margin-top: 20px;
+    display: flex;
     gap: 15px;
     flex-wrap: wrap;
   }
-  .controls button {
-    background-color: #27ae60;
+
+  button {
+    background: #1e88e5;
     color: white;
-    font-weight: 700;
-    font-size: 1.1rem;
     border: none;
-    padding: 12px 28px;
+    border-radius: 6px;
+    padding: 12px 25px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+    transition: background-color 0.3s;
+    flex-grow: 1;
+    min-width: 140px;
   }
-  .controls button:hover {
-    background-color: #219150;
-  }
+  button:hover { background: #1669bb; }
 
-  /* Preview */
-  #preview {
-    max-width: 900px;
-    margin: 30px auto 0 auto;
-    text-align: center;
-  }
-  #preview.hidden {
-    display: none;
-  }
-  #preview h3 {
-    font-weight: 700;
-    color: #27ae60;
-  }
-  #previewImage {
-    margin-top: 20px;
-    max-width: 100%;
-    box-shadow: 0 0 20px rgba(39, 174, 96, 0.25);
-  }
-
-  /* Responsivo */
-  @media (max-width: 650px) {
-    .header {
-      flex-direction: column;
-      gap: 12px;
-      text-align: center;
-    }
-    .header-info {
-      text-align: center;
-    }
-    .info-grid {
-      grid-template-columns: 1fr !important;
-    }
-    tbody td input {
-      width: 60px;
-    }
-    .controls button {
-      width: 100%;
-    }
-  }
-
-  /* Esconder botões no PDF */
-  .no-print {
-    display: block;
-  }
+  /* Ocultar botões no PDF */
   @media print {
-    .no-print {
-      display: none !important;
-    }
+    button, .no-print { display: none !important; }
+  }
+
+  /* Responsividade */
+  @media (max-width: 600px) {
+    .flex-row { flex-direction: column; }
+    .flex-col-2 { flex: 1 1 100%; }
+    .signatures { flex-direction: column; gap: 40px; }
+    .signature-box { min-width: 100%; margin-bottom: 10px; }
+    .buttons { flex-direction: column; gap: 15px; }
+    button { min-width: 100%; flex-grow: 0; }
+    /* Switch Quantidade → Qtd. */
+    th .full { display: none; }
+    th .abbr { display: inline; }
   }
 </style>
 </head>
 <body>
+<header>
+  <h1>Sistema de Orçamento e Recibo</h1>
+</header>
 
-<div class="orcamento" id="orcamento">
-  <div class="header">
-    <div class="logo-car">
-      <img src="./img/imgg.avif" alt="EliteCar Logo" />
-    </div>
-    <div class="header-info">
-      <h1>Elite Car</h1>
-      <p>Lanternagem e Pintura</p>
-      <h3>Orçamento</h3>
-    </div>
-  </div>
+<main>
+  <!-- ORÇAMENTO -->
+  <section id="orcamento">
+    <h2>Orçamento</h2>
 
-  <!-- Dados do Cliente -->
-  <div class="info-grid">
-    <div class="campo">
-      <label for="cliente">Nome da Cliente</label>
-      <input type="text" id="cliente" placeholder="Ex: Maria Silva" />
+    <div class="flex-row">
+      <div class="flex-col-2">
+        <label>Empresa</label>
+        <input type="text" id="empresaNome" value="Empresa Exemplo LTDA" />
+        <input type="text" id="empresaEndereco" value="Rua Exemplo, 123 - Cidade/UF" />
+        <input type="text" id="empresaTelefone" value="(99) 99999-9999" />
+      </div>
+      <div class="flex-col-2">
+        <label>Cliente</label>
+        <input type="text" id="clienteNome" placeholder="Nome do cliente" />
+        <input type="text" id="clienteEndereco" placeholder="Endereço do cliente" />
+        <input type="text" id="clienteTelefone" placeholder="Telefone do cliente" />
+      </div>
     </div>
-  <div class="campo">
-      <label for="endereco">Endereço</label>
-      <input type="text" id="endereco" placeholder="Rua, número, bairro" />
-    </div>
-    <div class="campo">
-      <label for="telefone">Telefone / WhatsApp</label>
-      <input type="text" id="telefone" placeholder="(00) 00000-0000" />
-    </div>
-  </div>
 
-  <h2 style="color:#27ae60; margin-bottom:12px;">Dados do Veículo</h2>
-  <div class="info-grid">
-    <div class="campo">
-      <label for="modelo">Modelo</label>
-      <input type="text" id="modelo" placeholder="Ex: Fiat Toro" />
+    <div class="flex-row" style="margin-top: 10px;">
+      <div class="flex-col-2">
+        <label>Data</label>
+        <input type="text" id="dataOrcamento" readonly />
+      </div>
+      <div class="flex-col-2">
+        <label>Hora</label>
+        <input type="text" id="horaOrcamento" readonly />
+      </div>
     </div>
-    <div class="campo">
-      <label for="placa">Placa</label>
-      <input type="text" id="placa" placeholder="Ex: ABC1D23" />
-    </div>
-    <div class="campo">
-      <label for="cor">Cor</label>
-      <input type="text" id="cor" placeholder="Ex: Vermelho" />
-    </div>
-  </div>
 
-  <div class="datatime">
-    <p>Data: <span id="data"></span></p>
-    <p>Hora: <span id="hora"></span></p>
-    <p><strong>Este orçamento é válido por 7 dias.</strong></p>
-  </div>
+    <label>Descrição dos Serviços/Produtos</label>
+    <textarea id="descricaoOrcamento" placeholder="Descreva aqui..."></textarea>
 
-  <div class="table-wrapper">
-    <table id="itens">
+    <table id="itensTabela">
       <thead>
         <tr>
-          <th>Qtd</th>
           <th>Descrição</th>
-          <th>Valor Unitário</th>
-          <th>Total</th>
-          <th class="botao-coluna no-print">Ação</th>
+          <th><span class="full">Quantidade</span><span class="abbr">Qtd.</span></th>
+          <th>Preço Unitário (R$)</th>
+          <th>Preço Total (R$)</th>
         </tr>
       </thead>
-      <tbody id="listaItens"></tbody>
+      <tbody>
+        <tr>
+          <td><input type="text" class="item-desc" placeholder="Item 1" /></td>
+          <td><input type="number" class="item-quant" min="1" value="1" /></td>
+          <td><input type="number" class="item-preco" min="0" step="0.01" value="0.00" /></td>
+          <td class="item-total">0.00</td>
+        </tr>
+      </tbody>
     </table>
-    <div class="total">Valor Total: R$ <span id="valorTotal">0,00</span></div>
-  </div>
 
-  <div class="controls no-print" id="controles">
-    <button onclick="adicionarItem()">➕ Adicionar Item</button>
-    <button onclick="gerarOrcamento()">Gerar Pré-visualização</button>
-  </div>
+    <button id="addItemBtn" class="no-print" style="margin-top:10px;">Adicionar Item</button>
 
-  <div style="margin-top: 25px;">
-    <label for="obs" style="font-weight: 600; font-size: 1rem;">Observações:</label>
-    <textarea id="obs" placeholder="Digite aqui alguma observação..." rows="4"></textarea>
-  </div>
+    <label>Observação</label>
+    <textarea id="observacaoOrcamento" placeholder="Observações adicionais..."></textarea>
 
-  <div style="margin-top: 20px;">
-    <input type="text" id="assinatura" placeholder="Assinatura do Responsável" style="width:100%; padding:10px; border-radius:8px; border: 1.8px solid #ddd; font-size: 1rem;"/>
-  </div>
-</div>
+    <h3>Total: R$ <span id="totalOrcamento">0.00</span></h3>
 
-<!-- Controles após geração -->
-<div class="controls no-print" id="acoesPreview" style="max-width: 900px; margin: 30px auto 0 auto; justify-content: center; gap: 15px; display: none;">
-  <button onclick="baixarPDF()">Baixar PDF</button>
-  <button onclick="compartilharWhatsApp()">Compartilhar via WhatsApp</button>
-  <button onclick="voltarEdicao()">Editar Novamente</button>
-</div>
+    <div class="signatures">
+      <div class="signature-box">Assinatura do Cliente</div>
+      <div class="signature-box">Assinatura do Prestador</div>
+    </div>
 
-<!-- Preview -->
-<div id="preview" class="hidden" style="max-width: 900px; margin: 30px auto 0 auto; text-align: center;">
-  <h3>Pré-visualização do Orçamento</h3>
-  <img id="previewImage" src="" alt="Prévia do orçamento gerado" />
-</div>
+    <div class="buttons">
+      <button id="baixarPdfOrcamento" class="no-print">Baixar PDF</button>
+      <button id="compartilharOrcamento" class="no-print">Compartilhar</button>
+    </div>
+  </section>
+
+  <!-- RECIBO -->
+  <section id="recibo">
+    <h2>Recibo</h2>
+
+    <div class="flex-row">
+      <div class="flex-col-2">
+        <label>Empresa</label>
+        <input type="text" id="empresaNomeRecibo" value="Empresa Exemplo LTDA" />
+        <input type="text" id="empresaEnderecoRecibo" value="Rua Exemplo, 123 - Cidade/UF" />
+        <input type="text" id="empresaTelefoneRecibo" value="(99) 99999-9999" />
+      </div>
+      <div class="flex-col-2">
+        <label>Cliente</label>
+        <input type="text" id="clienteNomeRecibo" placeholder="Nome do cliente" />
+        <input type="text" id="clienteEnderecoRecibo" placeholder="Endereço do cliente" />
+        <input type="text" id="clienteTelefoneRecibo" placeholder="Telefone do cliente" />
+      </div>
+    </div>
+
+    <div class="flex-row" style="margin-top: 10px;">
+      <div class="flex-col-2">
+        <label>Data</label>
+        <input type="text" id="dataRecibo" readonly />
+      </div>
+      <div class="flex-col-2">
+        <label>Hora</label>
+        <input type="text" id="horaRecibo" readonly />
+      </div>
+    </div>
+
+    <label>Valor Total (R$)</label>
+    <input type="number" id="valorTotalRecibo" min="0" step="0.01" />
+
+    <label>Valor Entrada (R$)</label>
+    <input type="number" id="valorEntradaRecibo" min="0" step="0.01" />
+
+    <label>Valor Restante (R$)</label>
+    <input type="number" id="valorRestanteRecibo" readonly />
+
+    <label>Forma de Pagamento</label>
+    <select id="formaPagamentoRecibo">
+      <option>Dinheiro</option>
+      <option>Cartão de Crédito</option>
+      <option>Cartão de Débito</option>
+      <option>Pix</option>
+    </select>
+
+    <div class="signatures">
+      <div class="signature-box">Assinatura do Cliente</div>
+      <div class="signature-box">Assinatura do Prestador</div>
+    </div>
+
+    <div class="buttons">
+      <button id="baixarPdfRecibo" class="no-print">Baixar PDF</button>
+      <button id="compartilharRecibo" class="no-print">Compartilhar</button>
+    </div>
+  </section>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  const { jsPDF } = window.jspdf;
-
+  // Atualiza data e hora
   function atualizarDataHora() {
     const agora = new Date();
-    document.getElementById('data').innerText = agora.toLocaleDateString('pt-BR');
-    document.getElementById('hora').innerText = agora.toLocaleTimeString('pt-BR');
+    const data = agora.toLocaleDateString('pt-BR');
+    const hora = agora.toLocaleTimeString('pt-BR', { hour12: false });
+    document.getElementById('dataOrcamento').value = data;
+    document.getElementById('horaOrcamento').value = hora;
+    document.getElementById('dataRecibo').value = data;
+    document.getElementById('horaRecibo').value = hora;
   }
   atualizarDataHora();
+  setInterval(atualizarDataHora, 60000);
 
-  // Função para formatar valores monetários
-  function formatarDinheiro(valor) {
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '').trim();
+  // Totais do orçamento
+  function atualizarTotalOrcamento() {
+    let total = 0;
+    document.querySelectorAll('#itensTabela tbody tr').forEach(row => {
+      const q = +row.querySelector('.item-quant').value || 0;
+      const p = +row.querySelector('.item-preco').value || 0;
+      const t = q * p;
+      row.querySelector('.item-total').textContent = t.toFixed(2);
+      total += t;
+    });
+    document.getElementById('totalOrcamento').textContent = total.toFixed(2);
   }
-
-  // Adicionar linha nova na tabela
-  function adicionarItem() {
-    const tbody = document.getElementById('listaItens');
+  document.getElementById('addItemBtn').onclick = () => {
+    const tbody = document.querySelector('#itensTabela tbody');
     const tr = document.createElement('tr');
-
     tr.innerHTML = `
-      <td><input type="number" min="1" value="1" onchange="atualizarLinha(this)" /></td>
-      <td><input type="text" placeholder="Descrição do item" /></td>
-      <td><input type="number" min="0" step="0.01" value="0.00" onchange="atualizarLinha(this)" /></td>
-      <td class="total-linha">R$ 0,00</td>
-      <td class="botao-coluna no-print"><button onclick="removerItem(this)">❌</button></td>
+      <td><input type="text" class="item-desc" placeholder="Item"/></td>
+      <td><input type="number" class="item-quant" min="1" value="1"/></td>
+      <td><input type="number" class="item-preco" min="0" step="0.01" value="0.00"/></td>
+      <td class="item-total">0.00</td>
     `;
     tbody.appendChild(tr);
-    atualizarTotal();
-  }
-
-  function removerItem(botao) {
-    botao.closest('tr').remove();
-    atualizarTotal();
-  }
-
-  // Atualiza a linha e total
-  function atualizarLinha(input) {
-    const tr = input.closest('tr');
-    const qtd = Number(tr.querySelector('td:nth-child(1) input').value) || 0;
-    const valorUnit = Number(tr.querySelector('td:nth-child(3) input').value) || 0;
-    const total = qtd * valorUnit;
-    tr.querySelector('.total-linha').innerText = 'R$ ' + formatarDinheiro(total);
-    atualizarTotal();
-  }
-
-  function atualizarTotal() {
-    const linhas = document.querySelectorAll('#listaItens tr');
-    let soma = 0;
-    linhas.forEach(tr => {
-      const tdTotal = tr.querySelector('.total-linha').innerText.replace('R$', '').replace('.', '').replace(',', '.').trim();
-      const val = parseFloat(tdTotal.replace(',', '.')) || 0;
-      soma += val;
-    });
-    document.getElementById('valorTotal').innerText = formatarDinheiro(soma);
-  }
-
-  // Gerar pré-visualização em imagem do orçamento
-  async function gerarOrcamento() {
-    const orcamentoDiv = document.getElementById('orcamento');
-
-    // Verifica se tem pelo menos 1 item com descrição preenchida
-    const items = document.querySelectorAll('#listaItens tr');
-    if(items.length === 0) {
-      alert('Adicione ao menos um item para gerar o orçamento.');
-      return;
-    }
-    for(let tr of items) {
-      const desc = tr.querySelector('td:nth-child(2) input').value.trim();
-      if(desc === '') {
-        alert('Preencha a descrição de todos os itens.');
-        return;
-      }
-    }
-
-    // Atualizar a data e hora na geração
-    atualizarDataHora();
-
-    // Ocultar controles para print
-    document.getElementById('controles').style.display = 'none';
-
-    // Captura o orçamento como imagem
-    const canvas = await html2canvas(orcamentoDiv, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
-
-    // Mostrar preview
-    const preview = document.getElementById('preview');
-    document.getElementById('previewImage').src = imgData;
-    preview.classList.remove('hidden');
-
-    // Mostrar botões para download e compartilhamento
-    document.getElementById('acoesPreview').style.display = 'flex';
-
-    // Esconder formulário para visualização limpa
-    orcamentoDiv.style.display = 'none';
-  }
-
-  // Baixar PDF com a imagem do orçamento
-  async function baixarPDF() {
-    const previewImg = document.getElementById('previewImage');
-
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    // Tamanho da imagem no PDF, mantendo proporção A4 (210x297 mm)
-    const larguraPDF = 190;
-    const proporcao = previewImg.naturalHeight / previewImg.naturalWidth;
-    const alturaPDF = larguraPDF * proporcao;
-
-    pdf.addImage(previewImg.src, 'PNG', 10, 10, larguraPDF, alturaPDF);
-    pdf.save('orcamento-elitecar.pdf');
-  }
-
-  // Compartilhar via WhatsApp com texto do orçamento (sem link para PDF)
-  function compartilharWhatsApp() {
-    // Recolher os dados preenchidos
-    const cliente = document.getElementById('cliente').value.trim();
-    const endereco = document.getElementById('endereco').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
-
-    const modelo = document.getElementById('modelo').value.trim();
-    const placa = document.getElementById('placa').value.trim();
-    const cor = document.getElementById('cor').value.trim();
-
-    const data = document.getElementById('data').innerText;
-    const hora = document.getElementById('hora').innerText;
-    const obs = document.getElementById('obs').value.trim();
-    const assinatura = document.getElementById('assinatura').value.trim();
-
-    // Montar texto do orçamento
-    let mensagem = `*Orçamento Elite Car*\n\n`;
-    mensagem += `*Cliente:* ${cliente}\n`;
-    mensagem += `*Endereço:* ${endereco}\n`;
-    mensagem += `*Telefone:* ${telefone}\n\n`;
-
-    mensagem += `*Veículo:*\nModelo: ${modelo}\nPlaca: ${placa}\nCor: ${cor}\n\n`;
-
-    mensagem += `*Data:* ${data}  *Hora:* ${hora}\n\n`;
-
-    mensagem += `*Itens:*\n`;
-    const linhas = document.querySelectorAll('#listaItens tr');
-    linhas.forEach(tr => {
-      const qtd = tr.querySelector('td:nth-child(1) input').value || '0';
-      const desc = tr.querySelector('td:nth-child(2) input').value || '';
-      const valUnit = tr.querySelector('td:nth-child(3) input').value || '0';
-      const total = tr.querySelector('.total-linha').innerText.replace('R$', '').trim();
-      mensagem += `- ${qtd} x ${desc} (R$ ${parseFloat(valUnit).toFixed(2)}) = R$ ${total}\n`;
-    });
-
-    const valorTotal = document.getElementById('valorTotal').innerText;
-    mensagem += `\n*Valor Total:* R$ ${valorTotal}\n`;
-
-    if(obs) {
-      mensagem += `\n*Observações:* ${obs}\n`;
-    }
-    if(assinatura) {
-      mensagem += `\n*Assinatura:* ${assinatura}\n`;
-    }
-    mensagem += `\n*Este orçamento é válido por 7 dias.*`;
-
-    // Codifica para URL
-    const mensagemCodificada = encodeURIComponent(mensagem);
-
-    // Link para WhatsApp com mensagem, sem número fixo (usuário escolhe)
-    const urlWhats = `https://wa.me/?text=${mensagemCodificada}`;
-
-    window.open(urlWhats, '_blank');
-  }
-
-  // Voltar para edição
-  function voltarEdicao() {
-    document.getElementById('preview').classList.add('hidden');
-    document.getElementById('acoesPreview').style.display = 'none';
-    document.getElementById('orcamento').style.display = 'block';
-    document.getElementById('controles').style.display = 'flex';
-  }
-
-  // Inicializar com um item vazio para facilitar
-  window.onload = () => {
-    adicionarItem();
+    tr.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
   };
-</script>
+  document.querySelectorAll('.item-quant, .item-preco').forEach(i => i.oninput = atualizarTotalOrcamento);
+  atualizarTotalOrcamento();
 
+  // Valor restante do recibo
+  function atualizarValorRestante() {
+    const t = +document.getElementById('valorTotalRecibo').value || 0;
+    const e = +document.getElementById('valorEntradaRecibo').value || 0;
+    document.getElementById('valorRestanteRecibo').value = (t - e).toFixed(2);
+  }
+  document.getElementById('valorTotalRecibo').oninput = atualizarValorRestante;
+  document.getElementById('valorEntradaRecibo').oninput = atualizarValorRestante;
+  atualizarValorRestante();
+
+  // Gerar PDF de seção
+  async function gerarPdfDaSecao(id, nomeArquivo) {
+    const { jsPDF } = window.jspdf;
+    const sec = document.getElementById(id);
+    sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = 'none');
+    const canvas = await html2canvas(sec, { scale: 2 });
+    sec.querySelectorAll('button,.no-print').forEach(b => b.style.display = '');
+    const img = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p','mm','a4');
+    const w = pdf.internal.pageSize.getWidth();
+    const h = (canvas.height * w) / canvas.width;
+    pdf.addImage(img, 'PNG', 0, 10, w, h);
+    pdf.save(nomeArquivo);
+  }
+  document.getElementById('baixarPdfOrcamento').onclick = () => gerarPdfDaSecao('orcamento','orcamento.pdf');
+  document.getElementById('baixarPdfRecibo').onclick = () => gerarPdfDaSecao('recibo','recibo.pdf');
+
+  // Compartilhar via email
+  function shareEmail(subj, body) {
+    window.location.href = `mailto:?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  }
+  function buildOrcText() {
+    let s = '--- Orçamento ---\nEmpresa: '+document.getElementById('empresaNome').value+'\nCliente: '+document.getElementById('clienteNome').value+'\nTotal: R$'+document.getElementById('totalOrcamento').textContent;
+    return s;
+  }
+  function buildRecText() {
+    let s = '--- Recibo ---\nEmpresa: '+document.getElementById('empresaNomeRecibo').value+'\nCliente: '+document.getElementById('clienteNomeRecibo').value+'\nTotal: R$'+document.getElementById('valorTotalRecibo').value;
+    return s;
+  }
+  document.getElementById('compartilharOrcamento').onclick = () => shareEmail('Orçamento', buildOrcText());
+  document.getElementById('compartilharRecibo').onclick = () => shareEmail('Recibo', buildRecText());
+</script>
 </body>
 </html>
