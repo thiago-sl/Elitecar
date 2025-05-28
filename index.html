@@ -189,11 +189,11 @@
         width: 60%;
       }
       #orcamento table th:nth-child(2) {
-        width: 20%;
+        width: 10%;
       }
       #orcamento table th:nth-child(3),
       #orcamento table th:nth-child(4) {
-        width: 10%;
+        width: 20%;
       }
       /* Mostrar abreviações */
       #orcamento table th:nth-child(2) .full {
@@ -310,12 +310,16 @@
 
       <label for="reciboEmpresaNome">Nome da empresa</label>
       <input type="text" id="reciboEmpresaNome" value="Elite Car" />
+ <label for="empresaEndereco">Endereço da empresa</label>
+      <input type="text" id="empresaEndereco" value="Qr3 Conjunto N Casa 6" />
+      <label for="empresaTelefone">Telefone da empresa</label>
+      <input type="text" id="empresaTelefone" value="(61) 98163-7286" />
 
       <label for="reciboClienteNome">Nome do cliente</label>
       <input type="text" id="reciboClienteNome" />
 
       <!-- Campo Valor Total (não editável, mas pode editar se quiser) -->
-      <label for="reciboValorTotal">Valor total</label>
+      <label for="reciboValorTotal">Valor total do Orçamento</label>
       <input type="number" id="reciboValorTotal" min="0" step="0.01" value="0.00" />
 
       <!-- Valor de entrada (valor pago agora) -->
@@ -506,6 +510,8 @@
       const doc = new jsPDF();
 
       const empresaNome = document.getElementById('reciboEmpresaNome').value.trim();
+      const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
+      const empresaTelefone = document.getElementById('empresaTelefone').value.trim();
       const clienteNome = document.getElementById('reciboClienteNome').value.trim();
       const valorTotalInput = document.getElementById('reciboValorTotal').value;
       const valorEntradaInput = document.getElementById('reciboValorEntrada').value;
@@ -533,16 +539,19 @@
       };
       const formaPagamentoTexto = formasPagamentoTexto[formaPagamento] || '';
 
-      doc.setFontSize(16);
+       doc.setFontSize(16);
       doc.text(empresaNome, 14, 20);
+      doc.setFontSize(11);
+      doc.text(empresaEndereco, 14, 27);
+      doc.text('Tel: ' + empresaTelefone, 14, 33);
 
       doc.setFontSize(13);
       doc.text('RECIBO', 105, 40, null, null, 'center');
 
       doc.setFontSize(11);
-      doc.text(`Recebemos de: ${clienteNome}`, 14, 60);
-      doc.text(`Valor total: R$ ${valorTotal}`, 14, 68);
-      doc.text(`Valor de entrada: R$ ${valorEntrada}`, 14, 76);
+      doc.text(`Cliente: ${clienteNome}`, 14, 60);
+      doc.text(`Valor total do Orçamento: R$ ${valorTotal}`, 14, 68);
+      doc.text(`Valor de entrada : R$ ${valorEntrada}`, 14, 76);
       doc.text(`Valor restante: R$ ${valorRestante}`, 14, 84);
       doc.text(`Forma de pagamento: ${formaPagamentoTexto}`, 14, 92);
       doc.text(`Data: ${data}`, 14, 100);
