@@ -43,14 +43,15 @@
       display: block;
       margin-top: 15px;
       font-weight: 600;
+      
     }
     input[type="text"],
     input[type="number"],
     select,
     textarea {
       width: 100%;
-      padding: 8px 10px;
-      margin-top: 5px;
+      padding: 12px 15px;
+      margin-top: 10px;
       border: 1.5px solid #ddd;
       border-radius: 5px;
       font-size: 1rem;
@@ -71,6 +72,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      padding: 15px;
     }
     th,
     td {
@@ -268,6 +270,7 @@
       <table id="itensTabela">
         <thead>
           <tr>
+            
             <th><span class="full">Item</span><span class="abbr">Item</span></th>
             <th><span class="full">Quantidade</span><span class="abbr">Qtd</span></th>
             <th>Preço Unitário</th>
@@ -296,8 +299,6 @@
       <button id="adicionarItem">Adicionar Item</button>
 
       <h3>Total Geral: R$ <span id="totalGeral">0.00</span></h3>
-  
-
 
       <!-- Botão gerar orçamento dentro do orçamento -->
       <div class="buttons">
@@ -380,14 +381,12 @@
         const quantidade = parseInt(linha.querySelector('.item-quant').value) || 0;
         const precoUnit = parseFloat(linha.querySelector('.item-preco').value) || 0;
         const total = quantidade * precoUnit;
-         const obs = document.getElementById('obsOrcamento').value;
         linha.querySelector('.item-total').value = total.toFixed(2);
         totalGeral += total;
       });
 
       document.getElementById('totalGeral').textContent = totalGeral.toFixed(2);
 
-   
       // Atualizar valor total do recibo automaticamente quando orçamento mudar
       document.getElementById('reciboValorTotal').value = totalGeral.toFixed(2);
 
@@ -431,7 +430,9 @@
     async function gerarPdfOrcamento() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+ 
 
+ 
       const empresaNome = document.getElementById('empresaNome').value.trim();
       const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
       const empresaTelefone = document.getElementById('empresaTelefone').value.trim();
@@ -441,8 +442,12 @@
       const veiculoPlaca = document.getElementById('veiculoPlaca').value.trim();
       const data = document.getElementById('dataOrcamento').value;
       const hora = document.getElementById('horaOrcamento').value;
+
+     
       
+
       doc.setFontSize(16);
+      
       doc.text(empresaNome, 14, 20);
       doc.setFontSize(11);
       doc.text(empresaEndereco, 14, 27);
@@ -458,23 +463,21 @@
       doc.text(`Placa do veículo: ${veiculoPlaca}`, 14, 73);
       doc.text(`Data: ${data}`, 150, 55);
       doc.text(`Hora: ${hora}`, 150, 61);
-    
-     
 
       // Cabeçalho da tabela
       const startY = 85;
       doc.setFillColor(227, 242, 253);
-      doc.rect(14, startY - 11, 189, 15, 'F'); // fundo azul claro
+      doc.rect(14, startY - 10, 182, 10, 'F'); // fundo azul claro
       doc.setTextColor(0);
       doc.setFont(undefined, 'bold');
       doc.text('Item', 16, startY - 7);
       doc.text('Qtd', 112, startY - 7);
       doc.text('Preço Unit.', 140, startY - 7);
       doc.text('Total', 175, startY - 7);
-     
       doc.setFont(undefined, 'normal');
 
       let posY = startY;
+      
 
       const linhas = document.querySelectorAll('#itensTabela tbody tr');
 
@@ -483,7 +486,7 @@
         const quant = linha.querySelector('.item-quant').value;
         const precoUnit = linha.querySelector('.item-preco').value;
         const total = linha.querySelector('.item-total').value;
-
+        
 
         if (!desc) return; // pular itens sem descrição
 
